@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "197294891868",
+    "firebase_url": "https://yadi-1b850.firebaseio.com",
+    "project_id": "yadi-1b850",
+    "storage_bucket": "yadi-1b850.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197294891868:android:c3e032783de73975",
+        "android_client_info": {
+          "package_name": "com.mastishka.yadiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197294891868-51fus17vlc34q72n8bco3ov5onas1v6m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mastishka.yadiapp",
+            "certificate_hash": "0de07b0594ece84bda94b430f991b3e5a5f138c6"
+          }
+        },
+        {
+          "client_id": "197294891868-4tq75972gdqas3p2p48hb8o81rl1epe4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0dwRf9nzI7JPc2jm21YDR7oXmrWeyOIs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "197294891868-4tq75972gdqas3p2p48hb8o81rl1epe4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
