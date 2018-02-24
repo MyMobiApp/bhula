@@ -15,23 +15,23 @@ export class HomePage {
   }
 
   send() {
-    (<any>window).FirebasePlugin.verifyPhoneNumber("+919039579039", 60, (credential)=> {
+    /*(<any>window).FirebasePlugin.verifyPhoneNumber("+919039579039", 60, (credential)=> {
       alert("SMS Sent Successfully");
       console.log(credential);
 
       this.verificationID = credential.verificationID;
     }, (error) => {
       console.error(error);
-    });
+    });*/
   }
 
   verify() {
-    let signinCredential = firebase.auth.PhoneAuthProvider.credential(this.verificationID, this.code);
+    /*let signinCredential = firebase.auth.PhoneAuthProvider.credential(this.verificationID, this.code);
 
     firebase.auth().signInWithCredential(signinCredential).then((info)=>{
       console.log(info);
     }, (error) => {
       console.log(error);
-    });
+    });*/
   }
 }
