@@ -1,0 +1,11 @@
+<!-- Generated template for the PhoneLoginComponent component -->
+<div id="recaptcha-container"></div>
+
+<ion-item>
+  <ion-label stacked>Phone Number</ion-label>
+  <ion-input type="number" [(ngModel)]="phoneNumber"></ion-input>
+</ion-item>
+
+<button ion-button id="sign-in-button" (click)="signIn(phoneNumber)">
+  Sign In
+</button>

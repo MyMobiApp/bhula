@@ -7,20 +7,12 @@ import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
-import { LoginPage } from '../pages/login/login';
+import { PhoneLoginComponent } from '../components/phone-login/phone-login';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-
-// Import Firebase
-//import * as firebase from 'firebase';
-
-// Import the AF2 Module
-//import { AngularFireModule } from 'angularfire2';
-//import { AngularFireDatabaseModule } from 'angularfire2/database';
  
- 
-// AF2 Settings
+// Firebase Settings
 export const firebaseConfig = {
   apiKey: "AIzaSyCfMP7vmlj44AwaFQW-q-ccI5GB8jHTC2w",
   authDomain: "yadi-1b850.firebaseapp.com",
@@ -37,7 +29,7 @@ export const firebaseConfig = {
     ContactPage,
     HomePage,
     TabsPage,
-    LoginPage
+    PhoneLoginComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +44,7 @@ export const firebaseConfig = {
     ContactPage,
     HomePage,
     TabsPage,
-    LoginPage
+    PhoneLoginComponent
   ],
   providers: [
     StatusBar,

@@ -1,5 +1,9 @@
-<ion-tabs>
-  <ion-tab [root]="tab1Root" tabTitle="Home" tabIcon="home"></ion-tab>
-  <ion-tab [root]="tab2Root" tabTitle="About" tabIcon="information-circle"></ion-tab>
-  <ion-tab [root]="tab3Root" tabTitle="Contact" tabIcon="contacts"></ion-tab>
+<ion-content padding *ngIf="loggedIn == false">
+  <phone-login></phone-login>
+</ion-content>
+
+<ion-tabs *ngIf="loggedIn == true">
+  <ion-tab [root]="tab1Root" tabTitle="Reminders" tabIcon="alert"></ion-tab>
+  <ion-tab [root]="tab2Root" tabTitle="Circle" tabIcon="people"></ion-tab>
+  <ion-tab [root]="tab3Root" tabTitle="Actions" tabIcon="flash"></ion-tab>
 </ion-tabs>

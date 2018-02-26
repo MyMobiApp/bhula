@@ -1,29 +1,26 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { AlertController } from 'ionic-angular';
 
 import * as firebase from 'firebase';
-import { TabsPage } from '../tabs/tabs';
 import {firebaseConfig} from '../../app/app.module';
 
-//import {FirebaseCrashReport} from '@CordovaLib/cordova-plugin-firebase-crash-report';
-
 /**
- * Generated class for the LoginPage page.
+ * Generated class for the PhoneLoginComponent component.
  *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
+ * See https://angular.io/api/core/Component for more info on Angular
+ * Components.
  */
-
-@IonicPage()
 @Component({
-  selector: 'page-login',
-  templateUrl: 'login.html',
+  selector: 'phone-login',
+  templateUrl: 'phone-login.html'
 })
-export class LoginPage {
+export class PhoneLoginComponent {
   public recaptchaVerifier:firebase.auth.RecaptchaVerifier;
-
-  constructor(public navCtrl: NavController, public alertCtrl:AlertController , public navParams: NavParams) {
+  
+  constructor(public alertCtrl:AlertController) {
     firebase.initializeApp(firebaseConfig);
+
+    console.log('Hello PhoneLoginComponent Component');
   }
 
   ionViewDidLoad() {
