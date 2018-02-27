@@ -4,9 +4,6 @@ import { AboutPage } from '../about/about';
 import { ContactPage } from '../contact/contact';
 import { HomePage } from '../home/home';
 
-import {ComponentsModule} from '../../components/components.module';
-import {PhoneLoginComponent} from '../../components/phone-login/phone-login';
-
 @Component({
   templateUrl: 'tabs.html'
 })

@@ -23,8 +23,9 @@ export class PhoneLoginComponent {
     console.log('Hello PhoneLoginComponent Component');
   }
 
-  ionViewDidLoad() {
+  ngOnInit () {
     this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+    
     console.log('ionViewDidLoad LoginPage');
   }
 
