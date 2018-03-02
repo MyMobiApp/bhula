@@ -13,7 +13,7 @@ export class TabsPage {
   tab2Root = AboutPage;
   tab3Root = ContactPage;
 
-  loggedIn:boolean = false;
+  loggedIn:boolean = true;
   
   constructor() {
     

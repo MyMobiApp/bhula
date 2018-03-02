@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController, Platform } from 'ionic-angular';
+import { AlertController, Platform, NavParams } from 'ionic-angular';
 import {Firebase} from '@ionic-native/firebase';
 
 import * as firebase from 'firebase';
@@ -19,12 +19,15 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
   providers: [SingletonServiceProvider, Firebase]
 })
 export class PhoneLoginComponent {
-  public recaptchaVerifier:firebase.auth.RecaptchaVerifier;
-  public phoneAuthProvider:firebase.auth.PhoneAuthProvider;
+  private timeoutDurationInSec: number = 60; // In seconds
+
+  private recaptchaVerifier:firebase.auth.RecaptchaVerifier;
+  private phoneAuthProvider:firebase.auth.PhoneAuthProvider;
   
   constructor(public alertCtrl:AlertController, 
     public singletonService:SingletonServiceProvider,
-    public platform:Platform,
+    public navParams: NavParams,
+    private platform:Platform,
     private firebasePlugin: Firebase) {
     console.log('Hello PhoneLoginComponent Component');
   }
@@ -37,16 +40,10 @@ export class PhoneLoginComponent {
     console.log('ionViewDidLoad LoginPage');
   }
 
-  verifyPhoneNumberPromise(confirmationResult) {
+  verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult) {
     // SMS sent. Prompt user to type the code from the message, then sign the
     // user in with confirmationResult.confirm(code).
-    let alert = this.alertCtrl.create({
-      title: 'In Promise',
-      subTitle: 'In verify phone number promise',
-      buttons: ['Dismiss']
-    });
-    alert.present();
-
+    
     let prompt = this.alertCtrl.create({
       title: 'Enter the Confirmation code',
       inputs: [{ name: 'confirmationCode', placeholder: 'Confirmation Code' }],
@@ -56,20 +53,15 @@ export class PhoneLoginComponent {
         },
         { text: 'Send',
           handler: data => {
-            // Here we need to handle the confirmation code
-            
             confirmationResult.confirm(data.confirmationCode)
             .then(function (result) {
-              // User signed in successfully.
               this.singletonService.loginState = true;
+              this.singletonService.loggedInPhoneNumber = phoneNumberString;
+              //this.navParams.set
               console.log(result.user);
               console.log("Signin Successful");
-              // ...
             }).catch(function (error) {
-              // User couldn't sign in (bad verification code?)
-              // ...
               this.singletonService.loginState = false;
-              //(<any>window).FirebaseCrashReport.log("Signin Failed");
             });
           }
         }
@@ -79,44 +71,53 @@ export class PhoneLoginComponent {
     prompt.present();
   }
   
+  verifyPhoneNumberPromiseAndroid(phoneNumberString, verificationId) {
+    let prompt = this.alertCtrl.create({
+      title: 'Enter the Confirmation code',
+      inputs: [{ name: 'confirmationCode', placeholder: 'Confirmation Code' }],
+      buttons: [
+        { text: 'Cancel',
+          handler: data => { console.log('Cancel clicked'); }
+        },
+        { text: 'Send',
+          handler: data => {
+            let signinCredential = firebase.auth.PhoneAuthProvider.credential(verificationId, data.confirmationCode);
+
+            firebase.auth().signInWithCredential(signinCredential).then((info)=>{
+              this.singletonService.loginState = false;
+              this.singletonService.loggedInPhoneNumber = phoneNumberString;
+              
+              alert("Sign-in Successful");
+              console.log(info);
+            }, (error) => {
+              this.singletonService.loginState = false;
+              alert("Sign-in Error: "+error);
+            });
+          }
+        }
+      ]
+    });
+
+    prompt.present();
+  }
+
   signIn(phoneNumber: number){
     const appVerifier = this.recaptchaVerifier;
     const phoneNumberString = "+" + phoneNumber;
   
     if(this.platform.is('android')) {
-      let alert = this.alertCtrl.create({
-        title: 'In Android',
-        subTitle: 'Going for android flow.',
-        buttons: ['Dismiss']
-      });
-      alert.present();
-
-      this.phoneAuthProvider.verifyPhoneNumber(phoneNumberString, appVerifier).then( confirmationResult => {
-        this.verifyPhoneNumberPromise(confirmationResult);
+      this.firebasePlugin.verifyPhoneNumber(phoneNumberString, this.timeoutDurationInSec).then( confirmationResult => {
+        this.verifyPhoneNumberPromiseAndroid(phoneNumberString, confirmationResult.verificationId);
       }).catch(function (error) {
-        let alert = this.alertCtrl.create({
-          title: 'Error',
-          subTitle: error,
-          buttons: ['Dismiss']
-        });
-        alert.present();
-
-        console.error("SMS not sent", error);
+        alert("SMS not sent error: "+error);
       });
     }
     else if(this.platform.is('core'))
     {
-      let alert = this.alertCtrl.create({
-        title: 'In Core',
-        subTitle: 'Going for core flow.',
-        buttons: ['Dismiss']
-      });
-      alert.present();
-
       firebase.auth().signInWithPhoneNumber(phoneNumberString, appVerifier).then( confirmationResult => {
-        this.verifyPhoneNumberPromise(confirmationResult);
+        this.verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult);
       }).catch(function (error) {
-        console.error("SMS not sent", error);
+        console.error("SMS not sent: ", error);
       });
     } 
   }

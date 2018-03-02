@@ -10,7 +10,7 @@ import * as firebase from 'firebase';
   providers: [Firebase]
 })
 export class HomePage {
-  verificationID: any;
+  verificationId: any;
   code: string = "";
   userInfo: any = {};
 
@@ -20,11 +20,11 @@ export class HomePage {
 
   send() {
     try {
-      this.firebasePlugin.verifyPhoneNumber("+919039579039", 60).then (verificationID=> {
-        alert("SMS Sent Successfully - " + JSON.stringify(verificationID));
-        console.log(verificationID);
+      this.firebasePlugin.verifyPhoneNumber("+919039579039", 60).then (credential=> {
+        alert("SMS Sent Successfully - " + JSON.stringify(credential.verificationId));
+        console.log(credential);
         
-        this.verificationID = verificationID;
+        this.verificationId = credential.verificationId;
       }).catch (error => {
         console.error(error);
       });
@@ -35,7 +35,7 @@ export class HomePage {
   }
 
   verify() {
-    let signinCredential = firebase.auth.PhoneAuthProvider.credential(this.verificationID, this.code);
+    let signinCredential = firebase.auth.PhoneAuthProvider.credential(this.verificationId, this.code);
 
     firebase.auth().signInWithCredential(signinCredential).then((info)=>{
       alert("Sign-in Success");
