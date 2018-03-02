@@ -13,6 +13,7 @@ import { PhoneLoginComponent } from '../components/phone-login/phone-login';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import {Firebase} from '@ionic-native/firebase';
 
 import * as firebase from 'firebase';
 
@@ -56,6 +57,7 @@ firebase.initializeApp(firebaseConfig);
     StatusBar,
     SplashScreen,
     SingletonServiceProvider,
+    Firebase,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

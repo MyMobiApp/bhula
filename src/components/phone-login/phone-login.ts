@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AlertController, Platform } from 'ionic-angular';
+import {Firebase} from '@ionic-native/firebase';
 
 import * as firebase from 'firebase';
 
@@ -15,7 +16,7 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
 @Component({
   selector: 'phone-login',
   templateUrl: 'phone-login.html',
-  providers: [SingletonServiceProvider]
+  providers: [SingletonServiceProvider, Firebase]
 })
 export class PhoneLoginComponent {
   public recaptchaVerifier:firebase.auth.RecaptchaVerifier;
@@ -23,7 +24,8 @@ export class PhoneLoginComponent {
   
   constructor(public alertCtrl:AlertController, 
     public singletonService:SingletonServiceProvider,
-    public platform:Platform) {
+    public platform:Platform,
+    private firebasePlugin: Firebase) {
     console.log('Hello PhoneLoginComponent Component');
   }
 

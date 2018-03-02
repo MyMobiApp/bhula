@@ -1,55 +1,44 @@
 import { Component } from '@angular/core';
 import { AlertController, NavController } from 'ionic-angular';
+import {Firebase} from '@ionic-native/firebase';
+
 import * as firebase from 'firebase';
-
-/*
-<string name="fb_app_id">1467456360020322</string>
-	<string name="fb_app_name">Yadi App : Social Reminder</string>
-	<string name="accountkit_token">12ddd326f018b01c38752fb837d35caf</string>
-*/
-
-declare var cordova: any;
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html'
+  templateUrl: 'home.html',
+  providers: [Firebase]
 })
 export class HomePage {
   verificationID: any;
   code: string = "";
   userInfo: any = {};
 
-  constructor(public navCtrl: NavController, private alertCtrl:AlertController) {
+  constructor(public navCtrl: NavController, private firebasePlugin: Firebase, private alertCtrl:AlertController) {
     
   }
 
   send() {
-    
-    cordova.plugins.firebase.auth.verifyPhoneNumber("+123456789").then(function(verificationID) {
-      alert("SMS Sent Successfully");
-      
-      this.verificationID = verificationID;
-    }).catch (error => {
-      alert(error);
-      console.error(error);
-    });
-
-    /*
-    this.firebasePlugin.verifyPhoneNumber("+919039579039", 60).then (credential=> {
-      alert("SMS Sent Successfully");
-      console.log(credential);
-
-      this.verificationID = credential.verificationID;
-    }).catch (error => {
-      console.error(error);
-    });
-    */
+    try {
+      this.firebasePlugin.verifyPhoneNumber("+919039579039", 60).then (verificationID=> {
+        alert("SMS Sent Successfully - " + verificationID);
+        console.log(verificationID);
+        
+        this.verificationID = verificationID;
+      }).catch (error => {
+        console.error(error);
+      });
+    }
+    catch(error) {
+      alert(error.message)
+    }
   }
 
   verify() {
     let signinCredential = firebase.auth.PhoneAuthProvider.credential(this.verificationID, this.code);
 
     firebase.auth().signInWithCredential(signinCredential).then((info)=>{
+      alert("Sign-in Success");
       console.log(info);
     }, (error) => {
       let alert = this.alertCtrl.create({
