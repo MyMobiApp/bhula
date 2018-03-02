@@ -1,0 +1,1 @@
+cordova plugin add cordova-plugin-accountkit --save --variable APP_ID="1467456360020322" --variable APP_NAME="Yadi App : Social Reminder" --variable CLIENT_TOKEN="12ddd326f018b01c38752fb837d35caf"

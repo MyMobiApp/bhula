@@ -1,6 +1,8 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { HttpModule } from '@angular/http';
+
 import { MyApp } from './app.component';
 
 import { AboutPage } from '../pages/about/about';
@@ -11,7 +13,11 @@ import { PhoneLoginComponent } from '../components/phone-login/phone-login';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
- 
+
+import * as firebase from 'firebase';
+
+import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
+
 // Firebase Settings
 export const firebaseConfig = {
   apiKey: "AIzaSyCfMP7vmlj44AwaFQW-q-ccI5GB8jHTC2w",
@@ -21,6 +27,7 @@ export const firebaseConfig = {
   storageBucket: "yadi-1b850.appspot.com",
   messagingSenderId: "197294891868"
 };
+firebase.initializeApp(firebaseConfig);
 
 @NgModule({
   declarations: [
@@ -33,9 +40,8 @@ export const firebaseConfig = {
   ],
   imports: [
     BrowserModule,
+    HttpModule,
     IonicModule.forRoot(MyApp)
-    /*AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireDatabaseModule*/
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -49,6 +55,7 @@ export const firebaseConfig = {
   providers: [
     StatusBar,
     SplashScreen,
+    SingletonServiceProvider,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

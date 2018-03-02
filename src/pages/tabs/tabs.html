@@ -1,8 +1,8 @@
-<ion-content padding *ngIf="loggedIn == false">
+<ion-content padding *ngIf="loggedIn == true">
   <phone-login></phone-login>
 </ion-content>
 
-<ion-tabs *ngIf="loggedIn == true">
+<ion-tabs *ngIf="loggedIn == false">
   <ion-tab [root]="tab1Root" tabTitle="Reminders" tabIcon="alert"></ion-tab>
   <ion-tab [root]="tab2Root" tabTitle="Circle" tabIcon="people"></ion-tab>
   <ion-tab [root]="tab3Root" tabTitle="Actions" tabIcon="flash"></ion-tab>
