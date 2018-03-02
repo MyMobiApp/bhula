@@ -21,7 +21,7 @@ export class HomePage {
   send() {
     try {
       this.firebasePlugin.verifyPhoneNumber("+919039579039", 60).then (verificationID=> {
-        alert("SMS Sent Successfully - " + verificationID);
+        alert("SMS Sent Successfully - " + JSON.stringify(verificationID));
         console.log(verificationID);
         
         this.verificationID = verificationID;
