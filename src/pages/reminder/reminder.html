@@ -1,11 +1,18 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Home</ion-title>
+  <ion-navbar color="primary">      
+    <ion-title>Reminders</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <div><h4>Home Page</h4></div>
+    <ion-card *ngFor="let item of reminderArray;">
+      <ion-card-header>
+        Header {{item.id}}
+      </ion-card-header>
+      <ion-card-content>
+          {{item.name}}
+      </ion-card-content>
+    </ion-card>
   <!--<button ion-button block (click)="send()">Send OTP!</button>
   <ion-input type="text" placeholder="Enter OTP" [(ngModel)]="code"></ion-input>
   <button ion-button block (click)="verify()">Verify!</button>-->

@@ -5,9 +5,9 @@ import { HttpModule } from '@angular/http';
 
 import { MyApp } from './app.component';
 
-import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
-import { HomePage } from '../pages/home/home';
+import { ActionsPage } from '../pages/actions/actions';
+import { CirclesPage } from '../pages/circles/circles';
+import { ReminderPage } from '../pages/reminder/reminder';
 import { TabsPage } from '../pages/tabs/tabs';
 import { PhoneLoginComponent } from '../components/phone-login/phone-login';
 
@@ -33,9 +33,9 @@ firebase.initializeApp(firebaseConfig);
 @NgModule({
   declarations: [
     MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
+    ActionsPage,
+    CirclesPage,
+    ReminderPage,
     TabsPage,
     PhoneLoginComponent
   ],
@@ -47,9 +47,9 @@ firebase.initializeApp(firebaseConfig);
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
+    ActionsPage,
+    CirclesPage,
+    ReminderPage,
     TabsPage,
     PhoneLoginComponent
   ],

@@ -3,12 +3,12 @@ import { NavController } from 'ionic-angular';
 
 @Component({
   selector: 'page-contact',
-  templateUrl: 'contact.html'
+  templateUrl: 'circles.html'
 })
-export class ContactPage {
+export class CirclesPage {
 
   constructor(public navCtrl: NavController) {
-
+    
   }
 
 }

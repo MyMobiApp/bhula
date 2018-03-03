@@ -6,13 +6,17 @@ import * as firebase from 'firebase';
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html',
+  templateUrl: 'reminder.html',
   providers: [Firebase]
 })
-export class HomePage {
+export class ReminderPage {
   verificationId: any;
   code: string = "";
-  userInfo: any = {};
+  reminderArray: { id: number, name: string }[] = [
+    { "id": 0, "name": "Available" },
+    { "id": 1, "name": "Ready" },
+    { "id": 2, "name": "Started" }
+];
 
   constructor(public navCtrl: NavController, private firebasePlugin: Firebase, private alertCtrl:AlertController) {
     

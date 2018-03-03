@@ -2,8 +2,14 @@
   <phone-login></phone-login>
 </ion-content>
 
-<ion-tabs *ngIf="loggedIn == false">
-  <ion-tab [root]="tab1Root" tabTitle="Reminders" tabIcon="alert"></ion-tab>
+<ion-tabs tabsPlacement="top" *ngIf="loggedIn == false">
+  <ion-fab bottom right>
+    <button ion-fab color="danger">
+      <ion-icon name="alarm"></ion-icon>
+    </button>
+  </ion-fab>
+
+  <ion-tab [root]="tab1Root" tabTitle="Reminders" tabIcon="alarm"></ion-tab>
   <ion-tab [root]="tab2Root" tabTitle="Circle" tabIcon="people"></ion-tab>
   <ion-tab [root]="tab3Root" tabTitle="Actions" tabIcon="flash"></ion-tab>
 </ion-tabs>
