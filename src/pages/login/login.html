@@ -14,5 +14,5 @@
 
 
 <ion-content padding>
-  <phone-login></phone-login>
+  <phone-login [countryCode]="countryCode" (loginSuccessCallback)="onLoginSuccess($event)"></phone-login>
 </ion-content>

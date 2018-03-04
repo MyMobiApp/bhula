@@ -1,4 +1,3 @@
-import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 
 /*
@@ -12,7 +11,7 @@ export class SingletonServiceProvider {
   public loginState:boolean = false;
   public loggedInPhoneNumber:string = "";
   
-  constructor(public http: Http) {
+  constructor() {
     console.log('Hello SingletonServiceProvider Provider');
   }
 

@@ -3,9 +3,14 @@
 
 <ion-item>
   <ion-label stacked>Phone Number</ion-label>
+  <ion-select [(ngModel)]="isdCode" *ngFor="let item of coumtryCodeArray;">
+      <ion-option value="{{item.dial_code}}">{{item.code}}</ion-option>
+  </ion-select>
   <ion-input type="number" [(ngModel)]="phoneNumber"></ion-input>
 </ion-item>
 
-<button ion-button id="sign-in-button" (click)="signIn(phoneNumber)">
+<div> <ion-checkbox></ion-checkbox> Please agree to the <a href="#">terms of service</a>.</div>
+
+<button full ion-button id="sign-in-button" (click)="signIn(phoneNumber)">
   Sign In
 </button>
