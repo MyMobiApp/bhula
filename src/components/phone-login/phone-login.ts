@@ -110,6 +110,8 @@ export class PhoneLoginComponent {
   }
 
   signIn(phoneNumber: string){
+    let thisObj = this;
+
     const appVerifier = this.recaptchaVerifier;
     const phoneNumberString = phoneNumber;
 
@@ -118,10 +120,10 @@ export class PhoneLoginComponent {
       .then(function() {
         let confResult;
 
-        this.firebasePlugin.verifyPhoneNumber(phoneNumberString, this.timeoutDurationInSec).then( confirmationResult => {
+        thisObj.firebasePlugin.verifyPhoneNumber(phoneNumberString, this.timeoutDurationInSec).then( confirmationResult => {
           confResult = confirmationResult;
 
-          this.verifyPhoneNumberPromiseAndroid(phoneNumberString, confirmationResult.verificationId);
+          thisObj.verifyPhoneNumberPromiseAndroid(phoneNumberString, confirmationResult.verificationId);
         }).catch(function (error) {
           alert("SMS not sent error: "+error);
         });
@@ -142,7 +144,7 @@ export class PhoneLoginComponent {
         firebase.auth().signInWithPhoneNumber(phoneNumberString, appVerifier).then( confirmationResult => {
           confResult = confirmationResult;
 
-          this.verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult);
+          thisObj.verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult);
         }).catch(function (error) {
           console.error("SMS not sent: ", error);
         });

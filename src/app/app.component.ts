@@ -16,7 +16,7 @@ import { SingletonServiceProvider } from '../providers/singleton-service/singlet
   providers: [SingletonServiceProvider]
 })
 export class MyApp {
-  rootPage:any = this.singletonService.loginState ? TabsPage : LoginPage;
+  rootPage:any = LoginPage;//this.singletonService.loginState ? TabsPage : LoginPage;
 
   constructor(platform: Platform, 
               statusBar: StatusBar, 
@@ -30,20 +30,20 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
 
-      this.onAppReady();
+      this.onAppReady(singletonService);
 
       statusBar.styleDefault();
       splashScreen.hide();
     });
+
+    firebase.initializeApp(environment.firebaseConfig);
   }
 
-  onAppReady(){
-    firebase.initializeApp(environment.firebaseConfig);
-
+  onAppReady(singletonService:SingletonServiceProvider){
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
-        this.singletonService.loginState = true;
+        singletonService.loginState = true;
         singletonService.userAuthInfo = user;
       } else {
         // No user is signed in.
