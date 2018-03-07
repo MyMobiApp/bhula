@@ -140,16 +140,12 @@
             "dial_code": "+237",
             "code": "CM"
         }, {
-            "name": "Canada",
-            "dial_code": "+1",
-            "code": "CA"
-        }, {
             "name": "Cape Verde",
             "dial_code": "+238",
             "code": "CV"
         }, {
             "name": "Cayman Islands",
-            "dial_code": "+ 345",
+            "dial_code": "+345",
             "code": "KY"
         }, {
             "name": "Central African Republic",
@@ -787,14 +783,6 @@
             "name": "Zimbabwe",
             "dial_code": "+263",
             "code": "ZW"
-        }, {
-            "name": "land Islands",
-            "dial_code": "",
-            "code": "AX"
-        }, {
-            "name": "Antarctica",
-            "dial_code": null,
-            "code": "AQ"
         }, {
             "name": "Bolivia, Plurinational State of",
             "dial_code": "+591",

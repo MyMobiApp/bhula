@@ -6,8 +6,8 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>Login</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>Yadi : Social Reminder App</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -15,4 +15,16 @@
 
 <ion-content padding>
   <phone-login [countryCode]="countryCode" (loginSuccessCallback)="onLoginSuccess($event)"></phone-login>
+  
+  <ion-footer>
+    <ion-row align-items-end>
+      <ion-col text-center>
+        <div class="footer">
+          <div>Copyright @{{currentYear}}</div>
+          <div>Mastishka Intellisys Private Limited</div>
+          <div>All rights reserved</div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-footer>
 </ion-content>

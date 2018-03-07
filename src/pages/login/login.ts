@@ -22,7 +22,8 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
   providers: [Sim, SingletonServiceProvider]
 })
 export class LoginPage {
-  countryCode:string = "91";
+  countryCode:string = "+91";
+  currentYear:number = (new Date()).getFullYear();
 
   constructor(public navCtrl: NavController, 
     public navParams: NavParams,
@@ -31,16 +32,18 @@ export class LoginPage {
   }
 
   ionViewDidLoad() {
-    this.objSim.hasReadPermission().then(
-      (info) => console.log('Has permission: ', info)
-    );
+    this.objSim.hasReadPermission().then( (info) => {
+      console.log('Has permission: ', info);
+      this.singletonService.simInfo = info;
+    });
+    
     console.log('ionViewDidLoad LoginPage');
   }
 
   onLoginSuccess(phoneNumberStr: string) {
+    this.singletonService.loginState = true;
     this.navCtrl.setRoot(TabsPage);
-
-    alert("Login Success: I am page and I got called. Your number - " + phoneNumberStr);
+    
     console.log("Login Success: I am page and I got called. Your number - " + phoneNumberStr);
   }
 

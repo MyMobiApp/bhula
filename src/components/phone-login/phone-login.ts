@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {Validators } from '@angular/forms';
 import { AlertController, Platform, NavParams, NavController } from 'ionic-angular';
 import {Firebase} from '@ionic-native/firebase';
 
@@ -24,7 +25,11 @@ export class PhoneLoginComponent {
   @Output() 
   loginSuccessCallback: EventEmitter<string> = new EventEmitter<string>();
 
-  private coumtryCodeArray:any;
+  loginEnabled: boolean = false;
+  phoneNumber: string;
+  isdCode: string;
+
+  private coumtryCodeArray:any = [];
   private timeoutDurationInSec: number = 60; // In seconds
   private recaptchaVerifier:firebase.auth.RecaptchaVerifier;
   private phoneAuthProvider:firebase.auth.PhoneAuthProvider;
@@ -34,20 +39,21 @@ export class PhoneLoginComponent {
     public navCtrl: NavController,
     private platform:Platform,
     private firebasePlugin: Firebase) {
-      console.log(countryCodeObj.default.countries);
-      this.coumtryCodeArray = countryCodeObj.default.countries;
+      this.coumtryCodeArray = (<any>countryCodeObj).countries;
+
+      this.coumtryCodeArray.sort((cur, next) => (<number>cur.name) < (<number>next.name) ? -1 : (<number>cur.name) > (<number>next.name) ? 1 : 0);
   }
 
   ngOnInit () {
     this.phoneAuthProvider = new firebase.auth.PhoneAuthProvider();
     this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-
-    console.log("ngOnInit PhoneLoginComponent: "+this.countryCode);
+    
+    //this.loginSuccessCallback.emit("+919039579039");
+    this.isdCode = this.countryCode;
   }
 
   verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult) {
-    // SMS sent. Prompt user to type the code from the message, then sign the
-    // user in with confirmationResult.confirm(code).
+    let objThis = this;
     
     let prompt = this.alertCtrl.create({
       title: 'Enter the Confirmation code',
@@ -60,11 +66,11 @@ export class PhoneLoginComponent {
           handler: data => {
             confirmationResult.confirm(data.confirmationCode)
             .then(function (result) {
+              objThis.loginSuccessCallback.emit(phoneNumberString);
               console.log(result.user);
-              console.log("Signin Successful");
-              this.loginSuccessCallback.emit(phoneNumberString);
+              console.log("Signin Successful via Core");
             }).catch(function (error) {
-              //this.singletonService.loginState = false;
+              console.log(error);
             });
           }
         }
@@ -75,6 +81,8 @@ export class PhoneLoginComponent {
   }
   
   verifyPhoneNumberPromiseAndroid(phoneNumberString, verificationId) {
+    let objThis = this;
+
     let prompt = this.alertCtrl.create({
       title: 'Enter the Confirmation code',
       inputs: [{ name: 'confirmationCode', placeholder: 'Confirmation Code' }],
@@ -87,11 +95,10 @@ export class PhoneLoginComponent {
             let signinCredential = firebase.auth.PhoneAuthProvider.credential(verificationId, data.confirmationCode);
 
             firebase.auth().signInWithCredential(signinCredential).then((info)=>{
-              alert("Sign-in Successful");
-              this.loginSuccessCallback.emit(phoneNumberString);
+              objThis.loginSuccessCallback.emit(phoneNumberString);
+              alert("Sign-in Successful via Android");
               console.log(info);
             }, (error) => {
-              //this.singletonService.loginState = false;
               alert("Sign-in Error: "+error);
             });
           }
@@ -102,26 +109,72 @@ export class PhoneLoginComponent {
     prompt.present();
   }
 
-  signIn(phoneNumber: number){
+  signIn(phoneNumber: string){
     const appVerifier = this.recaptchaVerifier;
-    const phoneNumberString = "+" + phoneNumber;
-  
+    const phoneNumberString = phoneNumber;
+
     if(this.platform.is('android')) {
-      this.firebasePlugin.verifyPhoneNumber(phoneNumberString, this.timeoutDurationInSec).then( confirmationResult => {
-        this.verifyPhoneNumberPromiseAndroid(phoneNumberString, confirmationResult.verificationId);
-        this.loginSuccessCallback.emit(phoneNumberString);
-      }).catch(function (error) {
-        alert("SMS not sent error: "+error);
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(function() {
+        let confResult;
+
+        this.firebasePlugin.verifyPhoneNumber(phoneNumberString, this.timeoutDurationInSec).then( confirmationResult => {
+          confResult = confirmationResult;
+
+          this.verifyPhoneNumberPromiseAndroid(phoneNumberString, confirmationResult.verificationId);
+        }).catch(function (error) {
+          alert("SMS not sent error: "+error);
+        });
+
+        return confResult;
+      })
+      .catch(function(error) {
+        console.log(error.code + " : " + error.message);
       });
+      
     }
     else if(this.platform.is('core'))
     {
-      firebase.auth().signInWithPhoneNumber(phoneNumberString, appVerifier).then( confirmationResult => {
-        this.verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult);
-      }).catch(function (error) {
-        console.error("SMS not sent: ", error);
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(function() {
+        let confResult;
+
+        firebase.auth().signInWithPhoneNumber(phoneNumberString, appVerifier).then( confirmationResult => {
+          confResult = confirmationResult;
+
+          this.verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult);
+        }).catch(function (error) {
+          console.error("SMS not sent: ", error);
+        });
+
+        return confResult;
+      })
+      .catch(function(error) {
+        console.log(error.code + " : " + error.message);
       });
+
+      
     }
   }
 
+  onISDCodeChange(isdCode: string) {
+    let ph = this.phoneNumber.substr(this.isdCode.length);
+    
+    this.isdCode = isdCode;
+    this.phoneNumber = this.countryCode + ph;
+  }
+
+  onTermsAgreed() {
+    this.loginEnabled = this.loginEnabled ?  false : true;
+  }
+
+  onPhoneNumberChange(phoneNumber:string) {
+    let ph = phoneNumber;
+    
+    if(phoneNumber.substr(0,1) == "+") {
+      ph = phoneNumber.substr(this.countryCode.length);
+    }
+
+    this.phoneNumber = this.countryCode + ph;
+  }
 }

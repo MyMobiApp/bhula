@@ -10,6 +10,8 @@ import { Injectable } from '@angular/core';
 export class SingletonServiceProvider {
   public loginState:boolean = false;
   public loggedInPhoneNumber:string = "";
+  public userAuthInfo: any = {};
+  public simInfo: any = {};
   
   constructor() {
     console.log('Hello SingletonServiceProvider Provider');

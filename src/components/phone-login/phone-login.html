@@ -1,16 +1,34 @@
 <!-- Generated template for the PhoneLoginComponent component -->
 <div id="recaptcha-container"></div>
 
-<ion-item>
-  <ion-label stacked>Phone Number</ion-label>
-  <ion-select [(ngModel)]="isdCode" *ngFor="let item of coumtryCodeArray;">
-      <ion-option value="{{item.dial_code}}">{{item.code}}</ion-option>
-  </ion-select>
-  <ion-input type="number" [(ngModel)]="phoneNumber"></ion-input>
-</ion-item>
-
-<div> <ion-checkbox></ion-checkbox> Please agree to the <a href="#">terms of service</a>.</div>
-
-<button full ion-button id="sign-in-button" (click)="signIn(phoneNumber)">
-  Sign In
-</button>
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <ion-item>
+        <ion-select [(ngModel)]="countryCode" (ionChange)="onISDCodeChange(countryCode)" interface="popover">
+          <ion-option *ngFor="let item of coumtryCodeArray;" value="{{item.dial_code}}">{{item.name}}</ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-item>
+        <ion-label color="primary" floating>Phone Number</ion-label>
+        <ion-input type="tel" [(ngModel)]="phoneNumber" (ngModelChange)="onPhoneNumberChange($event)" required></ion-input>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col text-center>
+        <div> <ion-checkbox (ionChange)="onTermsAgreed()"></ion-checkbox> I agree to the <a href="#">terms of service</a>.</div>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <button full ion-button (click)="signIn(phoneNumber)" [disabled]="!loginEnabled">
+        Send OTP
+      </button>
+    </ion-col>
+  </ion-row>
+</ion-grid>
