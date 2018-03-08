@@ -13,11 +13,13 @@ import { LoginPage } from '../pages/login/login';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import {Firebase} from '@ionic-native/firebase';
-import {Sim} from '@ionic-native/sim';
+import { Firebase } from '@ionic-native/firebase';
+import { Sim } from '@ionic-native/sim';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { ComponentsModule } from '../components/components.module';
 import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
+import { PhoneAuthServiceProvider } from '../providers/phone-auth-service/phone-auth-service';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { SingletonServiceProvider } from '../providers/singleton-service/singlet
     BrowserModule,
     HttpModule,
     ComponentsModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -49,7 +52,8 @@ import { SingletonServiceProvider } from '../providers/singleton-service/singlet
     SingletonServiceProvider,
     Firebase,
     Sim,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    PhoneAuthServiceProvider
   ]
 })
 export class AppModule {}

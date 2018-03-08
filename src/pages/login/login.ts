@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import {Sim} from '@ionic-native/sim';
 
 import * as firebase from 'firebase';
@@ -27,6 +28,8 @@ export class LoginPage {
 
   constructor(public navCtrl: NavController, 
     public navParams: NavParams,
+    private platform: Platform,
+    private storage: Storage,
     private objSim: Sim,
     public singletonService:SingletonServiceProvider) {
   }
@@ -42,16 +45,9 @@ export class LoginPage {
 
   onLoginSuccess(phoneNumberStr: string) {
     this.singletonService.loginState = true;
-    this.navCtrl.setRoot(TabsPage);
-    
     console.log("Login Success: I am page and I got called. Your number - " + phoneNumberStr);
+
+    this.navCtrl.setRoot(TabsPage);
   }
 
-  storeLoginInfoInDB() {
-
-  }
-
-  storeLoginInfoInLocalStorage() {
-    
-  }
 }

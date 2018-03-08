@@ -9,7 +9,6 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class SingletonServiceProvider {
   public loginState:boolean = false;
-  public loggedInPhoneNumber:string = "";
   public userAuthInfo: any = {};
   public simInfo: any = {};
   

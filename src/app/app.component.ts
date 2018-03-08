@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { Platform, Nav } from 'ionic-angular';
+
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { LoginPage } from '../pages/login/login';
@@ -12,16 +13,16 @@ import {enableProdMode} from '@angular/core';
 import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
 
 @Component({
-  templateUrl: 'app.html',
-  providers: [SingletonServiceProvider]
+  templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = LoginPage;//this.singletonService.loginState ? TabsPage : LoginPage;
-
+  rootPage:any ;//= LoginPage;
+  @ViewChild(Nav) nav: Nav;
+  
   constructor(platform: Platform, 
               statusBar: StatusBar, 
-              splashScreen: SplashScreen,
-              singletonService:SingletonServiceProvider) {
+              public splashScreen: SplashScreen,
+              private singletonService:SingletonServiceProvider) {
     if(environment.production == true) {
       enableProdMode();
     }
@@ -30,24 +31,30 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
 
-      this.onAppReady(singletonService);
-
+      this.onAppReady();
       statusBar.styleDefault();
-      splashScreen.hide();
     });
 
     firebase.initializeApp(environment.firebaseConfig);
   }
 
-  onAppReady(singletonService:SingletonServiceProvider){
+  onAppReady(){
+    let thisObj = this;
+
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
-        singletonService.loginState = true;
-        singletonService.userAuthInfo = user;
+        thisObj.singletonService.userAuthInfo = user;
+        console.log("user object: " + JSON.stringify(user));
+        
+        thisObj.nav.setRoot(TabsPage);
       } else {
-        // No user is signed in.
+        console.log("No user is signed in");
+
+        thisObj.nav.setRoot(LoginPage);
       }
-    });
+
+      thisObj.splashScreen.hide();
+    }); 
   }
 }

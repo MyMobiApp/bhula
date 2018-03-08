@@ -16,7 +16,7 @@ export class ReminderPage {
     { "id": 0, "name": "Available" },
     { "id": 1, "name": "Ready" },
     { "id": 2, "name": "Started" }
-];
+  ];
 
   constructor(public navCtrl: NavController, private firebasePlugin: Firebase, private alertCtrl:AlertController) {
     
