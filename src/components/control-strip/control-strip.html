@@ -1,0 +1,12 @@
+<!-- Generated template for the ControlStripComponent component -->
+<ion-navbar color="primary">      
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons right>
+      <button ion-button icon-only (click)="invite()" *ngIf="addButton">
+        <ion-icon name="add-circle"></ion-icon>
+      </button>
+      <button ion-button icon-only (click)="presentPopover($event)">
+        <ion-icon name="settings"></ion-icon>
+      </button>
+    </ion-buttons>
+</ion-navbar>

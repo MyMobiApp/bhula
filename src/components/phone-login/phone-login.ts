@@ -120,7 +120,7 @@ export class PhoneLoginComponent {
       .then(function() {
         let confResult;
 
-        thisObj.firebasePlugin.verifyPhoneNumber(phoneNumberString, this.timeoutDurationInSec).then( confirmationResult => {
+        thisObj.firebasePlugin.verifyPhoneNumber(phoneNumberString, thisObj.timeoutDurationInSec).then( confirmationResult => {
           confResult = confirmationResult;
 
           thisObj.verifyPhoneNumberPromiseAndroid(phoneNumberString, confirmationResult.verificationId);

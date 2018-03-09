@@ -10,6 +10,7 @@ import { CirclesPage } from '../pages/circles/circles';
 import { ReminderPage } from '../pages/reminder/reminder';
 import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
+import { SettingsPopoverPage } from '../pages/settings-popover/settings-popover';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -28,7 +29,8 @@ import { PhoneAuthServiceProvider } from '../providers/phone-auth-service/phone-
     CirclesPage,
     ReminderPage,
     TabsPage,
-    LoginPage
+    LoginPage,
+    SettingsPopoverPage
   ],
   imports: [
     BrowserModule,
@@ -44,7 +46,8 @@ import { PhoneAuthServiceProvider } from '../providers/phone-auth-service/phone-
     CirclesPage,
     ReminderPage,
     TabsPage,
-    LoginPage
+    LoginPage,
+    SettingsPopoverPage
   ],
   providers: [
     StatusBar,

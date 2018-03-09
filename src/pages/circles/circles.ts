@@ -11,4 +11,8 @@ export class CirclesPage {
     
   }
 
+  onAddButton() {
+    alert("Add button clicked!");
+  }
+
 }
