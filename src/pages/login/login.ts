@@ -20,7 +20,7 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
-  providers: [Sim, SingletonServiceProvider]
+  providers: [Sim]
 })
 export class LoginPage {
   countryCode:string = "+91";

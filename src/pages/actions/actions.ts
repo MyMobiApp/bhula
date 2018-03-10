@@ -4,8 +4,7 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
 
 @Component({
   selector: 'page-about',
-  templateUrl: 'actions.html',
-  providers: [SingletonServiceProvider]
+  templateUrl: 'actions.html'
 })
 export class ActionsPage {
   tokenId: string;
@@ -13,6 +12,9 @@ export class ActionsPage {
   constructor(public navCtrl: NavController,
               private singletonService: SingletonServiceProvider) {
     this.tokenId = singletonService.userAuthInfo.phoneNumber;
+
+    console.log("singletonService's userAuthInfo is : ");
+    console.log(singletonService.userAuthInfo);
   }
 
 }
