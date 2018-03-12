@@ -1,8 +1,8 @@
 {
-  "name": "yadi",
+  "name": "Yadi",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
+  "author": "Mastishka Intellisys Private Limited",
+  "homepage": "http://mastishka.com/",
   "private": true,
   "scripts": {
     "clean": "ionic-app-scripts clean",
@@ -36,7 +36,6 @@
     "cordova-plugin-sim": "^1.3.3",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-whitelist": "^1.3.3",
-    "cordova-sqlite-storage": "^2.2.1",
     "firebase": "^4.10.1",
     "ionic-angular": "3.9.2",
     "ionicons": "3.0.0",
@@ -57,8 +56,7 @@
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-firebase": {},
-      "cordova-plugin-sim": {},
-      "cordova-sqlite-storage": {}
+      "cordova-plugin-sim": {}
     },
     "platforms": [
       "android",
