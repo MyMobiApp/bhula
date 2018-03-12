@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { IonicModule } from 'ionic-angular';
 import { PhoneLoginComponent } from './phone-login/phone-login';
-import { ControlStripComponent } from './control-strip/control-strip';
+import { NavbarStripComponent } from './navbar-strip/navbar-strip';
 
 @NgModule({
 	declarations: [PhoneLoginComponent,
-    ControlStripComponent],
+    NavbarStripComponent],
 	imports: [IonicModule],
 	exports: [PhoneLoginComponent,
-    ControlStripComponent]
+    NavbarStripComponent]
 })
 export class ComponentsModule {}

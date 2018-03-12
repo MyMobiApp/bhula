@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import * as firebase from 'firebase';
+import 'firebase/firestore';
 
 /*
   Generated class for the FirestoreDBServiceProvider provider.
@@ -13,8 +13,14 @@ export class FirestoreDBServiceProvider {
   dbObj: any;
 
   constructor() {
+    console.log('Hello FirestoreDBServiceProvider Provider');
+  }
+
+  initFirestoreDB(firebase: any) {
     let _me_ = this;
 
+    _me_.dbObj = firebase.firestore();
+    
     firebase.firestore().enablePersistence()
       .then(function () {
         // Initialize Cloud Firestore through firebase
@@ -33,8 +39,6 @@ export class FirestoreDBServiceProvider {
           console.log("FirestoreDBServiceProvider unimplemented");
         }
       });
-
-    console.log('Hello FirestoreDBServiceProvider Provider');
   }
 
   /**
@@ -114,20 +118,61 @@ export class FirestoreDBServiceProvider {
   }
 
   /**
+  * Return documents from specific database collection
+  *
+  * @public
+  * @method getDocumentWithID
+  * @param  collectionObj    {String}           The database collection we want to retrieve records from
+  * @param  docID            {String}           The document ID
+  * @return {Promise}
+  */
+  getDocumentWithID(collectionObj: string, docID: string): Promise<any> {
+    let _me_ = this;
+
+    return new Promise((resolve, reject) => {
+      _me_.dbObj.collection(collectionObj)
+        .doc(docID)
+        .get()
+        .then((querySnapshot) => {
+          let obj: any;
+
+          if (querySnapshot.exists) {
+              obj = querySnapshot.data();
+              console.log("Document data:", querySnapshot.data());
+          } else {
+              // doc.data() will be undefined in this case
+              obj = null;
+              console.log("No such document!");
+          }
+
+
+          // Resolve the data that contains the formatted data
+          // from the retrieved document
+          resolve(obj);
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
+    });
+  }
+
+  /**
   * Add a new document to a selected database collection
   *
   * @public
   * @method addDocument
   * @param  collectionObj    {String}           The database collection we want to add a new document to
-  * @param  docObj           {Any}              The key/value object we want to add
+  * @param  docID            {String}           The document ID
+  * @param  dataObj          {Any}              The key/value object we want to add
   * @return {Promise}
   */
   addDocument(collectionObj: string,
+    docID: string,
     dataObj: any): Promise<any> {
     return new Promise((resolve, reject) => {
       let _me_ = this;
 
-      _me_.dbObj.collection(collectionObj).add(dataObj)
+      _me_.dbObj.collection(collectionObj).doc(docID).set(dataObj)
         .then((obj: any) => {
           resolve(obj);
         })
@@ -143,7 +188,7 @@ export class FirestoreDBServiceProvider {
   * @public
   * @method deleteDocument
   * @param  collectionObj    {String}           The database collection we want to delete a document from
-  * @param  docObj           {Any}              The document we wish to delete
+  * @param  docID            {Any}              The document we wish to delete
   * @return {Promise}
   */
   deleteDocument(collectionObj: string,

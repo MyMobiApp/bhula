@@ -10,10 +10,10 @@ import {SettingsPopoverPage} from '../../pages/settings-popover/settings-popover
  * Components.
  */
 @Component({
-  selector: 'control-strip',
-  templateUrl: 'control-strip.html'
+  selector: 'navbar-strip',
+  templateUrl: 'navbar-strip.html'
 })
-export class ControlStripComponent {
+export class NavbarStripComponent {
   @Input()
   title: string;
 

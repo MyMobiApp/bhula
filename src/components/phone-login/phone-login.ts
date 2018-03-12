@@ -41,7 +41,7 @@ export class PhoneLoginComponent {
     private firebasePlugin: Firebase) {
       this.coumtryCodeArray = (<any>countryCodeObj).countries;
 
-      this.coumtryCodeArray.sort((cur, next) => (<number>cur.name) < (<number>next.name) ? -1 : (<number>cur.name) > (<number>next.name) ? 1 : 0);
+      this.coumtryCodeArray.sort((cur, next) => (<string>cur.name) < (<string>next.name) ? -1 : (<string>cur.name) > (<string>next.name) ? 1 : 0);
   }
 
   ngOnInit () {
@@ -49,7 +49,13 @@ export class PhoneLoginComponent {
     this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
     
     //this.loginSuccessCallback.emit("+919039579039");
-    this.isdCode = this.countryCode;
+    
+    let country = this.coumtryCodeArray.find((obj) => {
+      return <string>obj.code == this.countryCode; 
+    });
+    
+    this.isdCode      = <any>country.dial_code;
+    this.countryCode  = <any>country.dial_code;
   }
 
   verifyPhoneNumberPromiseCore(phoneNumberString, confirmationResult) {

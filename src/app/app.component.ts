@@ -11,6 +11,7 @@ import * as firebase from 'firebase';
 import {enableProdMode} from '@angular/core';
 
 import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
+import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/firestore-db-service';
 
 @Component({
   templateUrl: 'app.html'
@@ -22,7 +23,8 @@ export class MyApp {
   constructor(platform: Platform, 
               statusBar: StatusBar, 
               public splashScreen: SplashScreen,
-              private singletonService:SingletonServiceProvider) {
+              private singletonService:SingletonServiceProvider,
+              public firebaseDBService: FirestoreDBServiceProvider) {
     if(environment.production == true) {
       enableProdMode();
     }
@@ -45,6 +47,34 @@ export class MyApp {
       if (user) {
         // User is signed in.
         thisObj.singletonService.userAuthInfo = user;
+
+        thisObj.firebaseDBService.initFirestoreDB(firebase);
+        thisObj.firebaseDBService.getDocumentWithID("Users", user.phoneNumber)
+        .then ((data) => {
+          if(data != null) {
+            // User already exists in DB, update it
+            thisObj.firebaseDBService.updateDocument("Users", user.phoneNumber, user.toJSON())
+            .then((data) => {
+              console.log("addDocument: " + JSON.stringify(data));
+            }, (error) => {
+              console.log(error);
+            });
+          }
+          else {
+            // This is new user and requires to be added to the 'Users' collection
+            
+            thisObj.firebaseDBService.addDocument("Users", user.phoneNumber, user.toJSON())
+            .then((data) => {
+              console.log("addDocument: " + JSON.stringify(data));
+            }, (error) => {
+              console.log(error);
+            });
+          }
+        }, (error) => {
+          console.log(error);
+        });
+        
+
         console.log("user object: " + JSON.stringify(user));
         
         thisObj.nav.setRoot(TabsPage);

@@ -50,11 +50,11 @@ import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/fi
   providers: [
     StatusBar,
     SplashScreen,
-    SingletonServiceProvider,
-    FirestoreDBServiceProvider,
     Firebase,
     Sim,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    SingletonServiceProvider,
+    FirestoreDBServiceProvider
   ]
 })
 export class AppModule {}

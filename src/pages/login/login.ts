@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { Platform, IonicPage, NavController, NavParams } from 'ionic-angular';
-import {Sim} from '@ionic-native/sim';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Sim } from '@ionic-native/sim';
 
 import * as firebase from 'firebase';
 
 import {TabsPage} from '../tabs/tabs';
 
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
+import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 
 /**
  * Generated class for the LoginPage page.
@@ -22,13 +23,11 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
   providers: [Sim]
 })
 export class LoginPage {
-  countryCode:string = "+91";
+  countryCode:string = "IN";
   currentYear:number = (new Date()).getFullYear();
 
   constructor(public navCtrl: NavController, 
     public navParams: NavParams,
-    private platform: Platform,
-    private storage: Storage,
     private objSim: Sim,
     public singletonService:SingletonServiceProvider) {
   }
@@ -37,6 +36,7 @@ export class LoginPage {
     this.objSim.hasReadPermission().then( (info) => {
       console.log('Has permission: ', info);
       this.singletonService.simInfo = info;
+      this.countryCode = info.countryCode;
     });
     
     console.log('ionViewDidLoad LoginPage');
