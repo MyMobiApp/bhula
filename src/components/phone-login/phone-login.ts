@@ -1,12 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { AlertController, Platform, NavParams, NavController } from 'ionic-angular';
-import {Firebase} from '@ionic-native/firebase';
+import { Firebase } from '@ionic-native/firebase';
+import { Sim } from '@ionic-native/sim';
 
 import * as firebase from 'firebase';
 import * as countryCodeObj from './country-codes.json';
 
-//import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
+import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 
 /**
  * Generated class for the PhoneLoginComponent component.
@@ -38,10 +39,62 @@ export class PhoneLoginComponent {
     public navParams: NavParams,
     public navCtrl: NavController,
     private platform:Platform,
-    private firebasePlugin: Firebase) {
+    private firebasePlugin: Firebase,
+    public objSim: Sim,
+    public singletonService: SingletonServiceProvider) {
       this.coumtryCodeArray = (<any>countryCodeObj).countries;
 
       this.coumtryCodeArray.sort((cur, next) => (<string>cur.name) < (<string>next.name) ? -1 : (<string>cur.name) > (<string>next.name) ? 1 : 0);
+
+      /*
+     * ---------------------------------------
+     * Sim Info Retrival
+     * ---------------------------------------
+     */
+    let _me_ = this;
+
+    _me_.objSim.hasReadPermission().then( (info) => {
+      //alert("hasReadPermission : " + info);
+
+      if(info) {
+        _me_.getSIMInfo();
+      }
+      else {
+        _me_.objSim.requestReadPermission().then(
+          () => {
+            _me_.getSIMInfo();
+        },
+          () => {
+            // Error
+            alert('Unable to get network read permission');
+          });
+      }
+    });
+    // ---------------------------------------
+  }
+
+  getSIMInfo() {
+    let _me_ = this;
+    
+    _me_.objSim.getSimInfo().then(
+      (info) => {
+        //alert(JSON.stringify(info));
+        
+        let country = this.coumtryCodeArray.find((obj) => {
+          return <string>obj.code == info.countryCode.toUpperCase(); 
+        });
+
+        //alert(JSON.stringify(country));
+        
+        _me_.isdCode      = <any>country.dial_code;
+        _me_.countryCode  = <any>country.dial_code;
+
+        _me_.singletonService.simInfo = info;
+      },
+      (err) => {
+        alert('Unable to get network info : ' + err);
+      }
+    );
   }
 
   ngOnInit () {
@@ -169,7 +222,7 @@ export class PhoneLoginComponent {
     let ph = this.phoneNumber.substr(this.isdCode.length);
     
     this.isdCode = isdCode;
-    this.phoneNumber = this.countryCode + ph;
+    this.phoneNumber = this.isdCode + ph;
   }
 
   onTermsAgreed() {
@@ -180,9 +233,9 @@ export class PhoneLoginComponent {
     let ph = phoneNumber;
     
     if(phoneNumber.substr(0,1) == "+") {
-      ph = phoneNumber.substr(this.countryCode.length);
+      ph = phoneNumber.substr(this.isdCode.length);
     }
 
-    this.phoneNumber = this.countryCode + ph;
+    this.phoneNumber = this.isdCode + ph;
   }
 }

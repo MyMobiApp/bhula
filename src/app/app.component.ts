@@ -23,7 +23,7 @@ export class MyApp {
   constructor(platform: Platform, 
               statusBar: StatusBar, 
               public splashScreen: SplashScreen,
-              private singletonService:SingletonServiceProvider,
+              public singletonService:SingletonServiceProvider,
               public firebaseDBService: FirestoreDBServiceProvider) {
     if(environment.production == true) {
       enableProdMode();
@@ -41,19 +41,24 @@ export class MyApp {
   }
 
   onAppReady(){
-    let thisObj = this;
+    let _me_ = this;
 
+    /*
+     * ---------------------------------------
+     * User Management
+     * ---------------------------------------
+     */
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
-        thisObj.singletonService.userAuthInfo = user;
+        _me_.singletonService.userAuthInfo = user;
 
-        thisObj.firebaseDBService.initFirestoreDB(firebase);
-        thisObj.firebaseDBService.getDocumentWithID("Users", user.phoneNumber)
+        _me_.firebaseDBService.initFirestoreDB(firebase);
+        _me_.firebaseDBService.getDocumentWithID("Users", user.phoneNumber)
         .then ((data) => {
           if(data != null) {
             // User already exists in DB, update it
-            thisObj.firebaseDBService.updateDocument("Users", user.phoneNumber, user.toJSON())
+            _me_.firebaseDBService.updateDocument("Users", user.phoneNumber, user.toJSON())
             .then((data) => {
               console.log("addDocument: " + JSON.stringify(data));
             }, (error) => {
@@ -63,7 +68,7 @@ export class MyApp {
           else {
             // This is new user and requires to be added to the 'Users' collection
             
-            thisObj.firebaseDBService.addDocument("Users", user.phoneNumber, user.toJSON())
+            _me_.firebaseDBService.addDocument("Users", user.phoneNumber, user.toJSON())
             .then((data) => {
               console.log("addDocument: " + JSON.stringify(data));
             }, (error) => {
@@ -73,18 +78,19 @@ export class MyApp {
         }, (error) => {
           console.log(error);
         });
-        
 
         console.log("user object: " + JSON.stringify(user));
         
-        thisObj.nav.setRoot(TabsPage);
+        _me_.nav.setRoot(TabsPage);
       } else {
         console.log("No user is signed in");
 
-        thisObj.nav.setRoot(LoginPage);
+        _me_.nav.setRoot(LoginPage);
       }
 
-      thisObj.splashScreen.hide();
-    }); 
+      _me_.splashScreen.hide();
+    });
+    // ---------------------------------------
   }
+  
 }
