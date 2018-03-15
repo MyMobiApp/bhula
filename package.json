@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "5.0.3",
     "@ionic-native/contacts": "^4.5.3",
     "@ionic-native/core": "4.4.0",
+    "@ionic-native/date-picker": "^4.5.3",
     "@ionic-native/firebase": "^4.5.3",
     "@ionic-native/sim": "^4.5.3",
     "@ionic-native/splash-screen": "4.4.0",
@@ -31,6 +32,7 @@
     "cordova-android": "~7.0.0",
     "cordova-browser": "~5.0.3",
     "cordova-plugin-contacts": "^3.0.1",
+    "cordova-plugin-datepicker": "^0.9.3",
     "cordova-plugin-device": "^2.0.1",
     "cordova-plugin-firebase": "^0.1.25",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
@@ -59,7 +61,8 @@
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-firebase": {},
       "cordova-plugin-sim": {},
-      "cordova-plugin-contacts": {}
+      "cordova-plugin-contacts": {},
+      "cordova-plugin-datepicker": {}
     },
     "platforms": [
       "android",

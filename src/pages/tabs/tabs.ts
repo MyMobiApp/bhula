@@ -1,22 +1,30 @@
 import { Component } from '@angular/core';
+import { NavController } from 'ionic-angular';
 
-import { ActionsPage } from '../actions/actions';
+import { TriggersPage } from '../triggers/triggers';
 import { CirclesPage } from '../circles/circles';
-import { ReminderPage } from '../reminder/reminder';
+import { ReminderListPage } from '../reminder-list/reminder-list';
+import { ReminderContainerPage } from '../reminder-container/reminder-container';
 
 @Component({
+  selector: 'page-tabs',
   templateUrl: 'tabs.html'
 })
 export class TabsPage {
 
-  tab1Root = ReminderPage;
+  tab1Root = ReminderListPage;
   tab2Root = CirclesPage;
-  tab3Root = ActionsPage;
+  tab3Root = TriggersPage;
 
   loggedIn:boolean = false;
+  reminderCaption: string;
   
-  constructor() {
-    
+  constructor(public navCtrl: NavController) {
+    this.reminderCaption = "All of your social reminders will be listed here.";
+  }
+
+  onAddReminder() {
+    this.navCtrl.push(ReminderContainerPage);
   }
 
 }

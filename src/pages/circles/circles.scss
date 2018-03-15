@@ -1,3 +1,10 @@
 page-circles {
+    $toolbar-ios-title-font-size: (
+        font-size: 0.75rem !important
+    );
 
+    .top-44  .tab-nav{
+        height: 54px;
+        top:54px !important;
+    }
 }

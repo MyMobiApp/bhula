@@ -5,11 +5,11 @@ import {Firebase} from '@ionic-native/firebase';
 import * as firebase from 'firebase';
 
 @Component({
-  selector: 'page-home',
-  templateUrl: 'reminder.html',
+  selector: 'page-reminder-list',
+  templateUrl: 'reminder-list.html',
   providers: [Firebase]
 })
-export class ReminderPage {
+export class ReminderListPage {
   verificationId: any;
   code: string = "";
   reminderArray: { id: number, name: string }[] = [

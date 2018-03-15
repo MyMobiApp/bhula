@@ -2,12 +2,15 @@ import { NgModule } from '@angular/core';
 import { IonicModule } from 'ionic-angular';
 import { PhoneLoginComponent } from './phone-login/phone-login';
 import { NavbarStripComponent } from './navbar-strip/navbar-strip';
+import { ReminderControlComponent } from './reminder-control/reminder-control';
 
 @NgModule({
 	declarations: [PhoneLoginComponent,
-    NavbarStripComponent],
+    NavbarStripComponent,
+    ReminderControlComponent],
 	imports: [IonicModule],
 	exports: [PhoneLoginComponent,
-    NavbarStripComponent]
+    NavbarStripComponent,
+    ReminderControlComponent]
 })
 export class ComponentsModule {}

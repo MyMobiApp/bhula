@@ -3,11 +3,11 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-list-header>Follow us on Twitter</ion-list-header>
-    <ion-item>
-      <ion-icon name="ionic" item-start></ion-icon>
-      @ionicframework
-    </ion-item>
-  </ion-list>
+    <ion-nav-view>
+        <ion-tabs tabsPlacement="bottom">
+            <ion-tab [root]="tab1Root" tabTitle="In Circle"></ion-tab>
+            <ion-tab [root]="tab2Root" tabTitle="Invitations"></ion-tab>
+            <ion-tab [root]="tab3Root" tabTitle="Remainings"></ion-tab>
+        </ion-tabs>
+    </ion-nav-view>
 </ion-content>

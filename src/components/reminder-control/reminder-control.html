@@ -1,0 +1,27 @@
+<!-- Generated template for the ReminderControlComponent component -->
+<ion-list>
+  <ion-item>
+    <ion-icon color="icon" name="create" item-start></ion-icon>
+    <ion-label color="label" floating>Title</ion-label>
+    <ion-input type="text" [(ngModel)]="title" item-end></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-icon color="icon" name="text" item-start></ion-icon>
+    <ion-textarea color="label" [(ngModel)]="description" placeholder="Enter a description (optional)" item-end></ion-textarea>
+  </ion-item>
+  <ion-item (click)="onDatePicker()">
+    <ion-icon color="icon" name="calendar" item-start></ion-icon>
+    <div><p color="label">Pick date</p></div>
+  </ion-item>
+  <ion-item (click)="onTimePicker()">
+    <ion-icon color="icon" name="time" item-start></ion-icon>
+    <div><p color="label">Pick time</p></div>
+  </ion-item>
+  <ion-item>
+    <ion-icon color="icon" name="map" item-start></ion-icon>
+    <div><p color="label">Location (optional)</p></div>
+  </ion-item>
+</ion-list>
+<button ion-button full icon-end color="label" (click)="onNext()">
+  Select from Circle <ion-icon name="arrow-dropright"></ion-icon>
+</button>
