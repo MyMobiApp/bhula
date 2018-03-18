@@ -1,7 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { PopoverController } from 'ionic-angular';
+import { PopoverController, Platform } from 'ionic-angular';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
-import {SettingsPopoverPage} from '../../pages/settings-popover/settings-popover';
+import { SettingsPopoverPage } from '../../pages/settings-popover/settings-popover';
+import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 
 /**
  * Generated class for the ControlStripComponent component.
@@ -14,16 +16,15 @@ import {SettingsPopoverPage} from '../../pages/settings-popover/settings-popover
   templateUrl: 'navbar-strip.html'
 })
 export class NavbarStripComponent {
-  @Input()
-  title: string;
+  title: string = "Yadi App";
 
-  @Input()
-  addButton: boolean = false;
-  
   @Output()
   onAddButton: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(public popoverCtrl: PopoverController) {
+  constructor(private popoverCtrl: PopoverController,
+              private socialSharing: SocialSharing, 
+              private singletonService: SingletonServiceProvider,
+              private platform: Platform) {
     console.log('Hello ControlStripComponent Component');
   }
 
@@ -35,7 +36,16 @@ export class NavbarStripComponent {
   }
 
   invite() {
-    this.onAddButton.emit();
+    let inviteMsg ;
+
+    if(this.platform.is('android')) {
+      inviteMsg = this.singletonService.shareAndroidMsg;
+    } else  if(this.platform.is('ios')) {
+      inviteMsg = this.singletonService.shareIOSMsg;
+    }
+
+    this.socialSharing.share(inviteMsg, this.singletonService.shareSubject);
+    //this.onAddButton.emit();
   }
 
 }

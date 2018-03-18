@@ -1,0 +1,34 @@
+<!--
+  Generated template for the CircleTabRemainingPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header no-border>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterItems()"></ion-searchbar>
+</ion-header>
+
+<ion-content padding>
+  <div *ngIf="showSpinner == true">
+    <p>Please wait while loading contacts ...</p>
+    <ion-spinner class="center-pos"></ion-spinner>
+  </div>
+
+  <ion-list>
+    <ion-item *ngFor="let contact of filteredContactList">
+      <ion-avatar *ngIf="contact.image" item-start>
+        <img [src]="contact.image">
+      </ion-avatar>
+      
+      {{contact.displayName}}
+      <p>{{contact.number}}</p>
+      <p ion-text color="danger" *ngIf="contact.onYadi == false">Invite on Yadi</p>
+      <p ion-text color="label" *ngIf="contact.onYadi == true">Add to your Circle</p>
+      
+      <button ion-button (click)="onAddOrInvite(contact.number, contact.onYadi)" item-end>
+        <ion-icon name="add" *ngIf="contact.onYadi == true"></ion-icon>
+        <span *ngIf="contact.onYadi == false">Invite</span>
+      </button>
+    </ion-item>
+  </ion-list>
+</ion-content>

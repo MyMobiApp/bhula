@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { CircleTabRemainingPage } from './circle-tab-remaining';
+import { CircleTabContactsPage } from './circle-tab-contacts';
 
 @NgModule({
   declarations: [
-    CircleTabRemainingPage,
+    CircleTabContactsPage,
   ],
   imports: [
-    IonicPageModule.forChild(CircleTabRemainingPage),
+    IonicPageModule.forChild(CircleTabContactsPage),
   ],
 })
 export class CircleTabRemainingPageModule {}

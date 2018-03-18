@@ -155,7 +155,6 @@ export class PhoneLoginComponent {
 
             firebase.auth().signInWithCredential(signinCredential).then((info)=>{
               objThis.loginSuccessCallback.emit(phoneNumberString);
-              alert("Sign-in Successful via Android");
               console.log(info);
             }, (error) => {
               alert("Sign-in Error: "+error);

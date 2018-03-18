@@ -4,7 +4,7 @@ import { Contacts } from '@ionic-native/contacts';
 
 import { CircleTabInCirclePage } from '../circle-tab-in-circle/circle-tab-in-circle';
 import { CircleTabInvitationsPage } from '../circle-tab-invitations/circle-tab-invitations';
-import { CircleTabRemainingPage } from '../circle-tab-remaining/circle-tab-remaining';
+import { CircleTabContactsPage } from '../circle-tab-contacts/circle-tab-contacts';
 
 @Component({
   selector: 'page-contact',
@@ -13,7 +13,7 @@ import { CircleTabRemainingPage } from '../circle-tab-remaining/circle-tab-remai
 export class CirclesPage {
   tab1Root = CircleTabInCirclePage;
   tab2Root = CircleTabInvitationsPage;
-  tab3Root = CircleTabRemainingPage;
+  tab3Root = CircleTabContactsPage;
 
   footerMaxHeight: number;
   
@@ -35,11 +35,11 @@ export class CirclesPage {
   onAddButton() {
     //this.contacts.find( {fields: {"*"}})
 
-    this.contacts.pickContact().then((contact) => {
+    /*this.contacts.pickContact().then((contact) => {
         alert("Contact : " + JSON.stringify(contact));
     },(err) => {
         alert("Error : " + err);
-    });
+    });*/
 
     alert("Add button clicked!");
   }

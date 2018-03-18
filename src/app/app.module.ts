@@ -15,13 +15,15 @@ import { ReminderContainerPage }    from '../pages/reminder-container/reminder-c
 import { ChooseFromCirclesPage }    from '../pages/choose-from-circles/choose-from-circles';
 import { CircleTabInCirclePage }    from '../pages/circle-tab-in-circle/circle-tab-in-circle';
 import { CircleTabInvitationsPage } from '../pages/circle-tab-invitations/circle-tab-invitations';
-import { CircleTabRemainingPage }   from '../pages/circle-tab-remaining/circle-tab-remaining';
+import { CircleTabContactsPage }    from '../pages/circle-tab-contacts/circle-tab-contacts';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Firebase } from '@ionic-native/firebase';
 import { Sim } from '@ionic-native/sim';
+import { SMS } from '@ionic-native/sms';
 import { DatePicker } from '@ionic-native/date-picker';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 import { Contacts } from '@ionic-native/contacts';
 
@@ -42,7 +44,7 @@ import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/fi
     ChooseFromCirclesPage,
     CircleTabInCirclePage,
     CircleTabInvitationsPage,
-    CircleTabRemainingPage
+    CircleTabContactsPage
   ],
   imports: [
     BrowserModule,
@@ -63,15 +65,17 @@ import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/fi
     ChooseFromCirclesPage,
     CircleTabInCirclePage,
     CircleTabInvitationsPage,
-    CircleTabRemainingPage
+    CircleTabContactsPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Firebase,
     Sim,
+    SMS,
     Contacts,
     DatePicker,
+    SocialSharing,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     SingletonServiceProvider,
     FirestoreDBServiceProvider
