@@ -24,12 +24,14 @@ import { Sim } from '@ionic-native/sim';
 import { SMS } from '@ionic-native/sms';
 import { DatePicker } from '@ionic-native/date-picker';
 import { SocialSharing } from '@ionic-native/social-sharing';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { Contacts } from '@ionic-native/contacts';
 
 import { ComponentsModule } from '../components/components.module';
 import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
 import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/firestore-db-service';
+import { PhoneContactsProvider } from '../providers/phone-contacts/phone-contacts';
 
 @NgModule({
   declarations: [
@@ -50,7 +52,8 @@ import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/fi
     BrowserModule,
     HttpModule,
     ComponentsModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -78,7 +81,8 @@ import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/fi
     SocialSharing,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     SingletonServiceProvider,
-    FirestoreDBServiceProvider
+    FirestoreDBServiceProvider,
+    PhoneContactsProvider
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

@@ -14,6 +14,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'circle-tab-in-circle.html',
 })
 export class CircleTabInCirclePage {
+  searchTerm: string = "";
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
@@ -22,4 +23,15 @@ export class CircleTabInCirclePage {
     console.log('ionViewDidLoad CircleTabInCirclePage');
   }
 
+  filterItems(){
+    let _me_ = this;
+
+    /*this.filteredContactList = Object.assign([], this.contactList.filter((item) => {
+        return item['displayName'].toLowerCase().indexOf(_me_.searchTerm.toLowerCase()) > -1;
+      }));*/
+    
+    //alert(JSON.stringify(this.filteredContactList));
+    //alert(JSON.stringify(this.contactList));
+    
+  }
 }

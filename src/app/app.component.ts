@@ -49,6 +49,7 @@ export class MyApp {
      * ---------------------------------------
      */
     firebase.auth().onAuthStateChanged(user => {
+      //firebase.firestore().collection("").
       if (user) {
         // User is signed in.
         _me_.singletonService.userAuthInfo = user;

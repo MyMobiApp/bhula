@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, PopoverController, Platform } from 'ionic-angular';
-import { DomSanitizer } from '@angular/platform-browser';
-import { SMS } from '@ionic-native/SMS';
-import { Contacts } from '@ionic-native/contacts';
+import { FormControl } from '@angular/forms';
+import 'rxjs/add/operator/debounceTime';
 
-import * as firebase from 'firebase';
-import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
+import { SMS } from '@ionic-native/SMS';
+
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
+import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
+import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
 
 /**
  * Generated class for the CircleTabRemainingPage page.
@@ -22,110 +23,57 @@ import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service
   providers: [SMS]
 })
 export class CircleTabContactsPage {
-  contactList:any             = [];
   filteredContactList: any    = [];
+  listTimer: any ;
+  searchControl: FormControl  = new FormControl();
 
   showSpinner: boolean        = false;
+  searching: boolean          = false;
   searchTerm: string          = "";
-  contactsCount: number       = 0;
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
-              public contacts: Contacts,
               public sms: SMS,
-              public sanitizer: DomSanitizer,
               public singletonService:SingletonServiceProvider,
-              public firebaseDBService: FirestoreDBServiceProvider,
+              public phoneContacts: PhoneContactsProvider,
+              public firestoreDBService: FirestoreDBServiceProvider,
               public popoverCtrl: PopoverController,
               public platform: Platform) {
     let _me_ = this;
-    _me_.showSpinner = true;
-
-    contacts.find(['displayName', 'name', 'phoneNumbers', 'photos', 'emails'], 
-    {filter: '', hasPhoneNumber: true, multiple: true})
-    .then(data => {
-      _me_.contactsCount = data.length;
-
-      for (var i=0 ; i < data.length; i++){
-        if(data[i].displayName !== null) {
-          for (var phIndex = 0; phIndex < data[i].phoneNumbers.length; phIndex++) {
-            let contact = {};
-            contact["displayName"]    = data[i].displayName;
-            contact["name"]           = data[i].name;
-            contact["number"]         = data[i].phoneNumbers[phIndex].value.replace(/\s+/g, '');
-            
-            if(data[i].emails != null) {
-              contact["email"] = data[i].emails[0].value;
-            } else {
-              contact["email"] = "";
-            }
-
-            contact["onYadi"]         = false;
-
-            if(data[i].photos != null) {
-              console.log(data[i].photos);
-              contact["image"] = _me_.sanitizer.bypassSecurityTrustUrl(data[i].photos[0].value);
-              console.log(contact);
-            } else {
-              contact["image"] = "assets/imgs/person-placeholder.png";
-            }
-            
-            var pos = _me_.contactList.findIndex(iter => iter.number === contact["number"]);
-            
-            if(pos == -1) {
-              _me_.contactList.push(contact);
-              _me_.filteredContactList.push(contact);
-            }
-          }
-        }
-      }
-      
-      _me_.contactList.sort((cur, next) => (<string>cur['displayName']) < (<string>next['displayName']) ? -1 : (<string>cur['displayName']) > (<string>next['displayName']) ? 1 : 0);
-      _me_.filteredContactList.sort((cur, next) => (<string>cur['displayName']) < (<string>next['displayName']) ? -1 : (<string>cur['displayName']) > (<string>next['displayName']) ? 1 : 0);
-      _me_.showSpinner = false;
-    }, (error) => {
-      alert(error);
-    });
     
+    _me_.phoneContacts.initFirestoreAndSingleton(_me_.firestoreDBService, _me_.singletonService);
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CircleTabRemainingPage');
+    let _me_ = this;
+    _me_.showSpinner = true;
+    
+    _me_.phoneContacts.loadContacts().then(() => {
+      _me_.filterItems();
+
+      _me_.listTimer = setInterval(function () {
+        if(_me_.phoneContacts.bListUpdated) {
+          _me_.filterItems();
+          
+          clearInterval(_me_.listTimer);
+        }
+      }, 1000);
+
+      this.searchControl.valueChanges.debounceTime(700).subscribe(search => {
+        this.searching = false;
+        this.filterItems();
+      });
+
+      _me_.showSpinner = false;
+    }).catch((error) => {
+      alert(error);
+
+      _me_.showSpinner = false;
+    });
   }
 
-  SyncUserContactsInDB() {
-    let _me_ = this;
-
-    _me_.firebaseDBService.initFirestoreDB(firebase);
-    _me_.firebaseDBService.getDocumentWithID("UserContacts", _me_.singletonService.userAuthInfo.phoneNumber)
-    .then ((data) => {
-      if(data != null) {
-        // User already exists in DB, update it
-        _me_.firebaseDBService.updateDocument("UserContacts", _me_.singletonService.userAuthInfo.phoneNumber, JSON.stringify(_me_.contactList))
-        .then((data) => {
-          alert(JSON.stringify(data));
-          console.log("addDocument: " + JSON.stringify(data));
-        }, (error) => {
-          alert(error);
-          console.log(error);
-        });
-      }
-      else {
-        // This is new user and requires to be added to the 'Users' collection
-        
-        _me_.firebaseDBService.addDocument("UserContacts", _me_.singletonService.userAuthInfo.phoneNumber, JSON.stringify(_me_.contactList))
-        .then((data) => {
-          alert(JSON.stringify(data));
-          console.log("addDocument: " + JSON.stringify(data));
-        }, (error) => {
-          alert(error);
-          console.log(error);
-        });
-      }
-    }, (error) => {
-      alert(error);
-      console.log(error);
-    });
+  onSearchInput(){
+    this.searching = true;
   }
 
   onAddOrInvite(phoneNumber: any, bOnYadi: boolean) {
@@ -156,13 +104,7 @@ export class CircleTabContactsPage {
   filterItems(){
     let _me_ = this;
 
-    this.filteredContactList = Object.assign([], this.contactList.filter((item) => {
-        return item['displayName'].toLowerCase().indexOf(_me_.searchTerm.toLowerCase()) > -1;
-      }));
-    
-    //alert(JSON.stringify(this.filteredContactList));
-    //alert(JSON.stringify(this.contactList));
-    
+    this.filteredContactList = _me_.phoneContacts.filterItems(_me_.searchTerm);
   }
 
   addToCircle(phoneNumber: any) {
