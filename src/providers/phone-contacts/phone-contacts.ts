@@ -96,7 +96,7 @@ export class PhoneContactsProvider {
           }
         }
         
-        _me_.storage.set(_me_.singletonService.phoneStorageName, JSON.stringify(_me_.singletonService.storageContacts));
+        _me_.storage.set(_me_.singletonService.phoneStorageContactsName, JSON.stringify(_me_.singletonService.storageContacts));
         
         _me_.checkContactsOnServer();
 
@@ -108,12 +108,50 @@ export class PhoneContactsProvider {
     });
   }
 
-  filterItems(searchTerm: string){
+  filterItems(searchTerm: string, bPhone: boolean = false){
     let _me_ = this;
 
     return Object.assign([], this.contactList.filter((item) => {
-        return item['displayName'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+        if(bPhone) {
+          return item['number'].indexOf(searchTerm.toLowerCase()) > -1;
+        } else {
+          return item['displayName'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+        }
       }));
+  }
+
+  mapContacts(inviteList: any, sentList: any) {
+    let _me_ = this;
+    let retContacts = [];
+
+    alert("T 1");
+    inviteList.forEach((value, index, ary) => {
+      var pos = _me_.contactList.findIndex(iter => iter.number === value.phoneNumber);
+
+      let item = _me_.contactList[pos];
+      item.sentTimestamp = value.sentTimestamp;
+      item.received = true;
+
+      if(pos > -1) {
+        retContacts.push(item);
+      }
+    });
+    
+    alert("T 2");
+    sentList.forEach((value, index, ary) => {
+      var pos = _me_.contactList.findIndex(iter => iter.number === value.phoneNumber);
+
+      let item = _me_.contactList[pos];
+      item.sentTimestamp = value.sentTimestamp;
+      item.received = false;
+
+      if(pos > -1) {
+        retContacts.push(item);
+      }
+    });
+
+    alert("T 3");
+    return retContacts;
   }
 
   checkContactsOnServer() {
@@ -121,29 +159,31 @@ export class PhoneContactsProvider {
     let iter = 0;
     
     _me_.singletonService.storageContacts.forEach((obj, pos, ary) => {
-      _me_.firebaseDBService.getDocumentWithID("Users", obj.phoneNumber).then((data)=>{
-        iter++;
 
-        if(data != null) {
-          let index = _me_.singletonService.storageContacts.findIndex(iter => iter.phoneNumber === data.phoneNumber);
-          if(index != -1) {
-            _me_.singletonService.storageContacts[index].onYadi = true;
+      if(!obj.onYadi) {
+        _me_.firebaseDBService.getDocumentWithID("Users", obj.phoneNumber).then((data)=>{
+          iter++;
+          if(data != null) {
+            let index = _me_.singletonService.storageContacts.findIndex(iter => iter.phoneNumber === data.phoneNumber);
+            if(index != -1) {
+              _me_.singletonService.storageContacts[index].onYadi = true;
+            }
+
+            index = _me_.contactList.findIndex(iter => iter.number === data.phoneNumber);
+            if(index != -1) {
+              _me_.contactList[index].onYadi = true;
+            }
           }
 
-          index = _me_.contactList.findIndex(iter => iter.number === data.phoneNumber);
-          if(index != -1) {
-            _me_.contactList[index].onYadi = true;
+          if(iter == ary.length) {
+            _me_.storage.set(_me_.singletonService.phoneStorageContactsName, JSON.stringify(_me_.singletonService.storageContacts));
+
+            _me_.bListUpdated = true;
           }
-        }
-
-        if(iter == ary.length) {
-          _me_.storage.set(_me_.singletonService.phoneStorageName, JSON.stringify(_me_.singletonService.storageContacts));
-
-          _me_.bListUpdated = true;
-        }
-      }).catch ((error) => {
-        console.log(error);
-      });  
+        }).catch ((error) => {
+          console.log(error);
+        });
+      }
     });
   }
 
@@ -160,7 +200,7 @@ export class PhoneContactsProvider {
     .then ((data) => {
       if(data != null) {
         // User already exists in DB, update it
-        _me_.firebaseDBService.updateDocument("UserContacts", _me_.singletonService.userAuthInfo.phoneNumber, JSON.stringify(_me_.singletonService.storageContacts))
+        _me_.firebaseDBService.updateDocument("UserContacts", _me_.singletonService.userAuthInfo.phoneNumber, {'storage_contacts':_me_.singletonService.storageContacts})
         .then((data) => {
           alert(JSON.stringify(data));
           console.log("addDocument: " + JSON.stringify(data));
@@ -172,7 +212,7 @@ export class PhoneContactsProvider {
       else {
         // This is new user and requires to be added to the 'Users' collection
         
-        _me_.firebaseDBService.addDocument("UserContacts", _me_.singletonService.userAuthInfo.phoneNumber, JSON.stringify(_me_.singletonService.storageContacts))
+        _me_.firebaseDBService.addDocument("UserContacts", _me_.singletonService.userAuthInfo.phoneNumber, {'storage_contacts':_me_.singletonService.storageContacts})
         .then((data) => {
           alert(JSON.stringify(data));
           console.log("addDocument: " + JSON.stringify(data));

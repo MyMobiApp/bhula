@@ -5,9 +5,44 @@
   Ionic pages and navigation.
 -->
 <ion-header no-border>
-  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterItems()"></ion-searchbar>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterInvites()"></ion-searchbar>
 </ion-header>
 
 <ion-content padding>
-  Incitations Tab
+  <div *ngIf="loading == true" class="spinner-container">
+    <p>Loading ...</p>
+    <ion-spinner class="center-pos"></ion-spinner>
+  </div>
+
+  <ion-refresher (ionRefresh)="refreshInvites($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list>
+    <ion-item *ngFor="let contact of normilizedInviteList">
+      <ion-avatar *ngIf="contact.image" item-start>
+        <img [src]="contact.image">
+      </ion-avatar>
+      
+      {{contact.displayName}}
+      <p>{{contact.number}}</p>
+      <p>{{contact.sentTimestamp}}</p>
+      <p *ngIf="contact.received == false" ion-text>Invited</p>
+      
+      <div *ngIf="contact.received == true">
+        <button ion-button round color="label" (click)="onAccept(contact.number)">
+          <span class="button-text-icon">Accept&nbsp;</span>
+          <ion-icon name="checkmark" class="button-text-icon"></ion-icon>
+        </button>
+        <button ion-button round color="danger" (click)="onIgnore(contact.number)">
+          <span class="button-text-icon">Ignore&nbsp;</span>
+          <ion-icon name="close" class="button-text-icon"></ion-icon>
+        </button>
+      </div>
+      <div *ngIf="contact.received == false" item-end>
+        <ion-icon name="paper-plane" class="button-text-icon"></ion-icon>
+      </div>
+      
+    </ion-item>
+  </ion-list>
 </ion-content>

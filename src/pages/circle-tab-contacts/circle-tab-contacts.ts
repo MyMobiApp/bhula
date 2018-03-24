@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PopoverController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 
 import { SMS } from '@ionic-native/SMS';
 
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
+import { InvitationsProvider } from '../../providers/invitations/invitations';
 
 /**
  * Generated class for the CircleTabRemainingPage page.
@@ -37,38 +41,45 @@ export class CircleTabContactsPage {
               public singletonService:SingletonServiceProvider,
               public phoneContacts: PhoneContactsProvider,
               public firestoreDBService: FirestoreDBServiceProvider,
-              public popoverCtrl: PopoverController,
+              public invitations: InvitationsProvider,
               public platform: Platform) {
     let _me_ = this;
     
     _me_.phoneContacts.initFirestoreAndSingleton(_me_.firestoreDBService, _me_.singletonService);
+    _me_.invitations.initPhoneContactsAndDB(_me_.phoneContacts, _me_.firestoreDBService);
   }
 
   ionViewDidLoad() {
     let _me_ = this;
-    _me_.showSpinner = true;
+    //_me_.showSpinner = true;
     
+    _me_.filterItems();
+    
+    _me_.searchControl.valueChanges.debounceTime(700).subscribe(search => {
+      _me_.searching = false;
+      _me_.filterItems();
+    });
+
+    _me_.listTimer = setInterval(function () {
+      if(_me_.phoneContacts.bListUpdated) {
+        _me_.filterItems();
+        
+        clearInterval(_me_.listTimer);
+      }
+    }, 1000);
+  }
+
+  refreshContacts(refresher) {
+    let _me_ = this;
+
     _me_.phoneContacts.loadContacts().then(() => {
       _me_.filterItems();
 
-      _me_.listTimer = setInterval(function () {
-        if(_me_.phoneContacts.bListUpdated) {
-          _me_.filterItems();
-          
-          clearInterval(_me_.listTimer);
-        }
-      }, 1000);
-
-      this.searchControl.valueChanges.debounceTime(700).subscribe(search => {
-        this.searching = false;
-        this.filterItems();
-      });
-
-      _me_.showSpinner = false;
+     refresher.complete();
     }).catch((error) => {
       alert(error);
-
-      _me_.showSpinner = false;
+      
+      refresher.complete();
     });
   }
 
@@ -79,9 +90,11 @@ export class CircleTabContactsPage {
   onAddOrInvite(phoneNumber: any, bOnYadi: boolean) {
     let inviteString = this.singletonService.shareGenericMsg;
     
+    alert(phoneNumber + " - " + bOnYadi);
+
     if(bOnYadi) {
       // On Yadi platform add to Circle
-      this.addToCircle(phoneNumber);
+      this.InviteToCircle(phoneNumber);
     }
     else {
       // Send an SMS Invite
@@ -107,7 +120,11 @@ export class CircleTabContactsPage {
     this.filteredContactList = _me_.phoneContacts.filterItems(_me_.searchTerm);
   }
 
-  addToCircle(phoneNumber: any) {
+  InviteToCircle(phoneNumber: any) {
+    let _me_ = this;
+    
+    _me_.invitations.sendInvite(_me_.singletonService.userAuthInfo.phoneNumber, phoneNumber);
+
     alert("Adding to circle : " + phoneNumber.toString());
   }
 

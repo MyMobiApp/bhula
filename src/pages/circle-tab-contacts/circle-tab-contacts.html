@@ -18,6 +18,10 @@
     <ion-spinner class="center-pos"></ion-spinner>
   </div>
 
+  <ion-refresher (ionRefresh)="refreshContacts($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-list>
     <ion-item *ngFor="let contact of filteredContactList">
       <ion-avatar *ngIf="contact.image" item-start>
@@ -29,10 +33,13 @@
       <p ion-text color="danger" *ngIf="contact.onYadi == false">Invite on Yadi</p>
       <p ion-text color="label" *ngIf="contact.onYadi == true">Add to your Circle</p>
       
-      <button ion-button round color="danger" (click)="onAddOrInvite(contact.number, contact.onYadi)" item-end>
-        <span *ngIf="contact.onYadi == true">Add <ion-icon name="add"></ion-icon></span>
-        <span *ngIf="contact.onYadi == false">Invite</span>
+      <button ion-button round [color]="contact.onYadi ? 'label' : 'danger'" (click)="onAddOrInvite(contact.number, contact.onYadi)" item-end>
+        <span *ngIf="contact.onYadi == true" class="button-text-icon">Add&nbsp;</span>
+        <ion-icon *ngIf="contact.onYadi == true" name="add" class="button-text-icon"></ion-icon>
+
+        <span *ngIf="contact.onYadi == false" class="button-text-icon">Invite</span>
       </button>
+      
     </ion-item>
   </ion-list>
 </ion-content>

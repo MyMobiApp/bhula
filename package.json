@@ -1,5 +1,5 @@
 {
-  "name": "Yadi",
+  "name": "com.mastishka.yadiapp",
   "version": "0.0.1",
   "author": "Mastishka Intellisys Private Limited",
   "homepage": "http://mastishka.com/",
@@ -59,7 +59,7 @@
     "@ionic/app-scripts": "3.1.8",
     "typescript": "2.4.2"
   },
-  "description": "An Ionic project",
+  "description": "A Social Reminder App",
   "cordova": {
     "plugins": {
       "cordova-plugin-whitelist": {},

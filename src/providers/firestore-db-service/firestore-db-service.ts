@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Network } from '@ionic-native/network';
 
 import 'firebase/firestore';
 
@@ -10,10 +11,52 @@ import 'firebase/firestore';
 */
 @Injectable()
 export class FirestoreDBServiceProvider {
-  dbObj: any;
+  dbObj:                  firebase.firestore.Firestore;
+  connectSubscription:    any;
+  disconnectSubscription: any;
+  bConnected:             boolean = false;
+  bWIFI:                  boolean = false;
+  timerHandle:            any;
+  networkSpeed:           string = "";
 
-  constructor() {
-    console.log('Hello FirestoreDBServiceProvider Provider');
+  constructor(private network: Network) {
+    this.initNetworkCheck();
+  }
+
+  initNetworkCheck() {
+    let _me_ = this;
+
+    _me_.connectSubscription = _me_.network.onConnect().subscribe(() => {
+      _me_.networkSpeed = _me_.network.downlinkMax;
+      
+      _me_.onNetworkConnected();
+
+      _me_.timerHandle = setTimeout(() => {
+        if (_me_.network.type === 'wifi') {
+          _me_.bWIFI = true;
+        } else {
+          _me_.bWIFI = false;
+        }
+
+        _me_.networkSpeed = _me_.network.downlinkMax;
+      }, 5000);
+    });
+
+    _me_.disconnectSubscription = _me_.network.onDisconnect().subscribe(() => {
+      _me_.onNetworkDisconnected();
+    });
+  }
+
+  onNetworkConnected() {
+    this.bConnected = true;
+
+    alert(this.networkSpeed + ", WIFI : " + this.bWIFI);
+  }
+
+  onNetworkDisconnected() {
+    this.bConnected = false;
+
+    alert("Network Disconnected!");
   }
 
   initFirestoreDB(firebase: any) {
@@ -121,6 +164,51 @@ export class FirestoreDBServiceProvider {
   * Return documents from specific database collection
   *
   * @public
+  * @method getCollectionsOfDocument
+  * @param  collectionObj    {String}           The database collection we want to retrieve records from
+  * @param  docID            {String}           The document ID
+  * @return {Promise}
+  */
+ getCollectionsOfDocument(collectionObj: string, docID: string): Promise<any> {
+  let _me_ = this;
+
+  return new Promise((resolve, reject) => {
+    _me_.dbObj.collection(collectionObj)
+      .get()
+      .then((querySnapshot) => {
+
+        // Declare an array which we'll use to store retrieved documents
+        let obj: any = [];
+
+
+        // Iterate through each document, retrieve the values for each field
+        // and then assign these to a key in an object that is pushed into the
+        // obj array
+        querySnapshot
+          .forEach((doc: any) => {
+            obj.push({
+              id: doc.id,
+              city: doc.data().city,
+              population: doc.data().population,
+              established: doc.data().established
+            });
+          });
+
+
+        // Resolve the completed array that contains all of the formatted data
+        // from the retrieved documents
+        resolve(obj);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+    });
+  }
+
+  /**
+  * Return documents from specific database collection
+  *
+  * @public
   * @method getDocumentWithID
   * @param  collectionObj    {String}           The database collection we want to retrieve records from
   * @param  docID            {String}           The document ID
@@ -179,6 +267,61 @@ export class FirestoreDBServiceProvider {
         .catch((error: any) => {
           reject(error);
         });
+    });
+  }
+
+  /**
+  * Set/Add a field in existing document (or create if not exist) to a selected database collection
+  * Ref: https://cloud.google.com/firestore/docs/manage-data/add-data
+  * 
+  * @public
+  * @method addDocument
+  * @param  collectionObj    {String}           The database collection we want to add a new document to
+  * @param  docID            {String}           The document ID
+  * @param  dataObj          {Any}              The key/value object we want to add
+  * @return {Promise}
+  */
+  setFieldInDocument(collectionObj: string,
+    docID: string,
+    dataObj: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let _me_ = this;
+
+      _me_.dbObj.collection(collectionObj).doc(docID).set(dataObj, { merge: true })
+        .then((obj: any) => {
+          resolve(obj);
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
+    });
+  }
+
+  /**
+  * Add a new document to a selected database collection
+  *
+  * @public
+  * @method addDocument
+  * @param  collectionObj    {String}           The database collection we want to add a new document to
+  * @param  docID            {String}           The document ID
+  * @param  subCollectionObj {String}           The sub collection we want to add a new document to
+  * @param  dataObj          {Any}              The key/value object we want to add
+  * @return {Promise}
+  */
+ addSubCollectionToDocument(collectionObj: string,
+  docID: string,
+  subCollectionObj: string,
+  dataObj: any): Promise<any> {
+  return new Promise((resolve, reject) => {
+    let _me_ = this;
+
+    _me_.dbObj.collection(collectionObj).doc(docID).collection(subCollectionObj).add(dataObj)
+      .then((obj: any) => {
+        resolve(obj);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
     });
   }
 

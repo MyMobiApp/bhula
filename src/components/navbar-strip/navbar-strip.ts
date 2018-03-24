@@ -16,7 +16,7 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
   templateUrl: 'navbar-strip.html'
 })
 export class NavbarStripComponent {
-  title: string = "Yadi App";
+  title: string = "Yaydi";
 
   @Output()
   onAddButton: EventEmitter<void> = new EventEmitter<void>();
