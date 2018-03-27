@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { Contacts } from '@ionic-native/contacts';
 
 import { CircleTabInCirclePage } from '../circle-tab-in-circle/circle-tab-in-circle';
 import { CircleTabInvitationsPage } from '../circle-tab-invitations/circle-tab-invitations';
@@ -17,8 +16,7 @@ export class CirclesPage {
 
   footerMaxHeight: number;
   
-  constructor(public navCtrl: NavController,
-              private contacts: Contacts) {
+  constructor(public navCtrl: NavController) {
     
   }
 

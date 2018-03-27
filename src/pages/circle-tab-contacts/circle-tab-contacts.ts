@@ -5,12 +5,12 @@ import 'rxjs/add/operator/debounceTime';
 
 import { SMS } from '@ionic-native/SMS';
 
-import * as firebase from 'firebase';
+//import * as firebase from 'firebase';
 import 'firebase/firestore';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
-import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
+import { PhoneContactsProvider, CContactJSON } from '../../providers/phone-contacts/phone-contacts';
 import { InvitationsProvider } from '../../providers/invitations/invitations';
 
 /**
@@ -24,10 +24,10 @@ import { InvitationsProvider } from '../../providers/invitations/invitations';
 @Component({
   selector: 'page-circle-tab-contacts',
   templateUrl: 'circle-tab-contacts.html',
-  providers: [SMS]
+  providers: [SMS, InvitationsProvider]
 })
 export class CircleTabContactsPage {
-  filteredContactList: any    = [];
+  filteredContactList: CContactJSON[]    = [];
   listTimer: any ;
   searchControl: FormControl  = new FormControl();
 

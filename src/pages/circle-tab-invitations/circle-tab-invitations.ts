@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
-import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
+import { PhoneContactsProvider, CContactJSON } from '../../providers/phone-contacts/phone-contacts';
 import { InvitationsProvider } from '../../providers/invitations/invitations';
+import { CirclesProvider } from '../../providers/circles/circles';
 
 /**
  * Generated class for the CircleTabInvitationsPage page.
@@ -19,6 +19,7 @@ import { InvitationsProvider } from '../../providers/invitations/invitations';
 @Component({
   selector: 'page-circle-tab-invitations',
   templateUrl: 'circle-tab-invitations.html',
+  providers: [InvitationsProvider, CirclesProvider]
 })
 export class CircleTabInvitationsPage {
   loading: boolean = true;
@@ -34,17 +35,17 @@ export class CircleTabInvitationsPage {
   *   status: 0 // Invited: 0, Accepted: 1, Ignored/Rejected: 2
   * };
   */
-  inviteList: any ;
-  sentList: any;
-  normilizedInviteList: any = [];
+  normilizedInviteList: CContactJSON[] = [];
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               public singletonService:SingletonServiceProvider,
               public firestoreDBService: FirestoreDBServiceProvider,
               public phoneContacts: PhoneContactsProvider,
-              public invitations: InvitationsProvider) {
+              public invitations: InvitationsProvider,
+              public circles: CirclesProvider) {
     this.invitations.initPhoneContactsAndDB (phoneContacts, firestoreDBService);
+    this.circles.initPhoneContactsAndDB (phoneContacts, firestoreDBService);
   }
 
   ionViewDidLoad() {
@@ -68,32 +69,6 @@ export class CircleTabInvitationsPage {
     _me_.normilizedInviteList = _me_.invitations.filterInvites(_me_.searchTerm);
   }
 
-  loadInvites(): Promise<any> {
-    let _me_ = this;
-
-    return new Promise((resolve, reject) => {
-      _me_.firestoreDBService.dbObj.collection("UserInvites").
-      doc(_me_.singletonService.userAuthInfo.phoneNumber).onSnapshot((docSnapshot) => {
-        if(docSnapshot.exists) {
-          // docSnapshot.metadata.fromCache : true, means data is coming from cache
-          // and false means from server
-          _me_.inviteList = docSnapshot.data().invites ? docSnapshot.data().invites : [] ;
-          _me_.sentList   = docSnapshot.data().sent ? docSnapshot.data().sent : [] ;
-
-          alert("Invites : " + JSON.stringify(_me_.inviteList));
-          alert("Sent : " + JSON.stringify(_me_.sentList));
-
-          _me_.normilizedInviteList = _me_.phoneContacts.mapContacts(_me_.inviteList, _me_.sentList);
-        } else {
-          _me_.normilizedInviteList = [];
-        }
-        resolve();
-      }, (error) => {
-        reject(error);
-      });
-    });
-  }
-
   refreshInvites(refresher) {
     let _me_ = this;
 
@@ -110,10 +85,18 @@ export class CircleTabInvitationsPage {
   }
 
   onAccept(phoneNumber) {
+    let _me_ = this;
+
+    _me_.circles.addToCircle(_me_.singletonService.userAuthInfo.phoneNumber, phoneNumber);
+    _me_.invitations.acceptInvite(_me_.singletonService.userAuthInfo.phoneNumber, phoneNumber);
+
     alert("Accept : " + phoneNumber);
   }
 
   onIgnore(phoneNumber) {
+    let _me_ = this;
+
+    _me_.invitations.ignoreInvite(_me_.singletonService.userAuthInfo.phoneNumber, phoneNumber);
     alert("Ignore : " + phoneNumber)
   }
 }

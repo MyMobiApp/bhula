@@ -25,10 +25,15 @@
       </ion-avatar>
       
       {{contact.displayName}}
-      <p>{{contact.number}}</p>
-      <p>{{contact.sentTimestamp}}</p>
+      <p>{{contact.phoneNumber}}</p>
+      <p *ngIf="contact.received == true">{{contact.inviteExtra.sentTimestamp}}</p>
+      <p *ngIf="contact.received == false">{{contact.sentExtra.sentTimestamp}}</p>
       <p *ngIf="contact.received == false" ion-text>Invited</p>
-      
+      <!--
+      <p *ngIf="contact.received == false && contact.status == 1" ion-text>Your invitation is accepted</p>
+      <p *ngIf="contact.received == false && contact.status == 2" ion-text>Your invitation is ignored</p>
+      -->
+
       <div *ngIf="contact.received == true">
         <button ion-button round color="label" (click)="onAccept(contact.number)">
           <span class="button-text-icon">Accept&nbsp;</span>

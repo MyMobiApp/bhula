@@ -13,6 +13,8 @@ import {enableProdMode} from '@angular/core';
 import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
 import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/firestore-db-service';
 import { PhoneContactsProvider } from '../providers/phone-contacts/phone-contacts';
+import { CirclesProvider } from '../providers/circles/circles';
+import { InvitationsProvider } from '../providers/invitations/invitations';
 
 @Component({
   templateUrl: 'app.html'
@@ -27,6 +29,8 @@ export class MyApp {
               public statusBar: StatusBar, 
               public splashScreen: SplashScreen,
               public phoneContacts: PhoneContactsProvider,
+              public circles: CirclesProvider,
+              public invitations: InvitationsProvider,
               public singletonService:SingletonServiceProvider,
               public firebaseDBService: FirestoreDBServiceProvider) {
     if(environment.production == true) {
@@ -42,6 +46,8 @@ export class MyApp {
       _me_.firebaseDBService.initFirestoreDB(firebase);
       // Initialize Phone Contacts Provider
       _me_.phoneContacts.initFirestoreAndSingleton(_me_.firebaseDBService, _me_.singletonService);
+      _me_.invitations.initPhoneContactsAndDB(_me_.phoneContacts, _me_.firebaseDBService);
+      _me_.circles.initPhoneContactsAndDB(_me_.phoneContacts, _me_.firebaseDBService);
 
       _me_.loadPhoneContacts();
       statusBar.styleDefault();
@@ -75,6 +81,9 @@ export class MyApp {
       if (user) {
         // User is signed in.
         _me_.singletonService.userAuthInfo = user;
+
+        _me_.circles.loadCircle(user.phoneNumber);
+        _me_.invitations.loadInvites(user.phoneNumber);
 
         _me_.firebaseDBService.getDocumentWithID("Users", user.phoneNumber)
         .then ((data) => {

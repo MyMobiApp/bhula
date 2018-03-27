@@ -34,6 +34,7 @@ import { SingletonServiceProvider } from '../providers/singleton-service/singlet
 import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/firestore-db-service';
 import { PhoneContactsProvider } from '../providers/phone-contacts/phone-contacts';
 import { InvitationsProvider } from '../providers/invitations/invitations';
+import { CirclesProvider } from '../providers/circles/circles';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import { InvitationsProvider } from '../providers/invitations/invitations';
     SingletonServiceProvider,
     FirestoreDBServiceProvider,
     PhoneContactsProvider,
-    InvitationsProvider
+    InvitationsProvider,
+    CirclesProvider
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
