@@ -9,19 +9,28 @@
 </ion-header>
 
 <ion-content padding>
+  <div *ngIf="loading == true" class="spinner-container">
+    <p>Loading ...</p>
+    <ion-spinner class="center-pos"></ion-spinner>
+  </div>
+  
   <ion-refresher (ionRefresh)="refreshCircleList($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list>
-    <ion-item *ngFor="let contact of normilizedCircleList">
+  <ion-list [virtualScroll]="normilizedCircleList">
+    <ion-item *virtualItem="let contact">
       <ion-avatar *ngIf="contact.image" item-start>
         <img [src]="contact.image">
       </ion-avatar>
       
       {{contact.displayName}}
       <p>{{contact.phoneNumber}}</p>
-      <p>{{contact.acceptedTimestamp}}</p>
+      <p>{{contact.circleExtra.acceptedTimestamp}}</p>
+      <p ion-text>Minimum Daily: {{contact.circleExtra.minReminders}}</p>
+      <p ion-text>Maximum Daily: <span *ngIf="contact.circleExtra.maxReminders < 0">Unlimited</span>
+        <span *ngIf="contact.circleExtra.maxReminders > 0">{{contact.circleExtra.maxReminders}}</span>
+      </p>
       <div item-end>
         <ion-icon name="md-checkmark-circle-outline" class="button-text-icon"></ion-icon>
       </div>

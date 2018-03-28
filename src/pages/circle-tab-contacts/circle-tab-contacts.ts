@@ -117,7 +117,7 @@ export class CircleTabContactsPage {
   filterItems(){
     let _me_ = this;
 
-    this.filteredContactList = _me_.phoneContacts.filterItems(_me_.searchTerm);
+    _me_.filteredContactList = _me_.phoneContacts.filterItems(_me_.searchTerm);
   }
 
   InviteToCircle(phoneNumber: any) {

@@ -34,11 +34,8 @@ export class CircleTabInCirclePage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CircleTabInCirclePage');
-  }
-
-  ionViewDidEnter() {
     let _me_ = this;
+    _me_.loading = true;
 
     _me_.circles.loadCircle(_me_.singletonService.userAuthInfo.phoneNumber).then((list) => {
       _me_.loading = false;
@@ -46,6 +43,12 @@ export class CircleTabInCirclePage {
     }).catch((error) => {
       console.log(error);
     });
+  }
+
+  ionViewDidEnter() {
+    let _me_ = this;
+
+    _me_.filterCircle();
   }
 
   filterCircle(){

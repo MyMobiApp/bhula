@@ -18,23 +18,24 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list>
-    <ion-item *ngFor="let contact of normilizedInviteList">
+  <ion-list [virtualScroll]="normilizedInviteList">
+    <ion-item *virtualItem="let contact">
       <ion-avatar *ngIf="contact.image" item-start>
         <img [src]="contact.image">
       </ion-avatar>
       
       {{contact.displayName}}
       <p>{{contact.phoneNumber}}</p>
-      <p *ngIf="contact.received == true">{{contact.inviteExtra.sentTimestamp}}</p>
-      <p *ngIf="contact.received == false">{{contact.sentExtra.sentTimestamp}}</p>
-      <p *ngIf="contact.received == false" ion-text>Invited</p>
+      <p *ngIf="contact.bInvitePresent">{{contact.inviteExtra.sentTimestamp}}</p>
+      <p *ngIf="contact.bSentPresent">{{contact.sentExtra.sentTimestamp}}</p>
+      <p *ngIf="contact.bSentPresent && !contact.bCirclePresent" ion-text>Invited</p>
+      <p *ngIf="contact.bCirclePresent" ion-text>Invited: In your circle</p>
       <!--
       <p *ngIf="contact.received == false && contact.status == 1" ion-text>Your invitation is accepted</p>
       <p *ngIf="contact.received == false && contact.status == 2" ion-text>Your invitation is ignored</p>
       -->
 
-      <div *ngIf="contact.received == true">
+      <div *ngIf="contact.bInvitePresent">
         <button ion-button round color="label" (click)="onAccept(contact.number)">
           <span class="button-text-icon">Accept&nbsp;</span>
           <ion-icon name="checkmark" class="button-text-icon"></ion-icon>
@@ -44,7 +45,7 @@
           <ion-icon name="close" class="button-text-icon"></ion-icon>
         </button>
       </div>
-      <div *ngIf="contact.received == false" item-end>
+      <div *ngIf="contact.bSentPresent" item-end>
         <ion-icon name="paper-plane" class="button-text-icon"></ion-icon>
       </div>
       

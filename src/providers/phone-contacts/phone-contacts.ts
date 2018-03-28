@@ -9,7 +9,7 @@ import * as firebase from 'firebase';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 
-interface InviteJSON {
+interface IInviteJSON {
     phoneNumber:  string;
     sentTimestamp: string;
     acceptedTimestamp: string;
@@ -17,7 +17,7 @@ interface InviteJSON {
     status: number; // Invited: 0, Accepted: 1, Ignored/Rejected: 2
 }
 
-export class CInviteJSON implements InviteJSON {
+export class CInviteJSON implements IInviteJSON {
   phoneNumber:  string;
   sentTimestamp: string;
   acceptedTimestamp: string;
@@ -34,21 +34,21 @@ export class CInviteJSON implements InviteJSON {
     };
   }
 
-  setObj(obj: InviteJSON) {
+  setObj(obj: IInviteJSON) {
     this.phoneNumber        = obj.phoneNumber;
-    this.sentTimestamp      = obj.sentTimestamp;
-    this.acceptedTimestamp  = obj.acceptedTimestamp;
-    this.ignoredTimestamp   = obj.ignoredTimestamp;
+    this.sentTimestamp      = obj.sentTimestamp ? (new Date(obj.sentTimestamp)).toLocaleString() : null ;
+    this.acceptedTimestamp  = obj.acceptedTimestamp ? (new Date(obj.acceptedTimestamp)).toLocaleString() : null ;
+    this.ignoredTimestamp   = obj.ignoredTimestamp ? (new Date(obj.ignoredTimestamp)).toLocaleString() : null ;
     this.status             = obj.status;
   }
 }
 
-interface SentJSON {
+interface ISentJSON {
   phoneNumber:  string;
   sentTimestamp: string;
 }
 
-export class CSentJSON implements SentJSON {
+export class CSentJSON implements ISentJSON {
   phoneNumber:  string;
   sentTimestamp: string;
 
@@ -59,20 +59,20 @@ export class CSentJSON implements SentJSON {
     };
   }
 
-  setObj(obj: SentJSON) {
+  setObj(obj: ISentJSON) {
     this.phoneNumber = obj.phoneNumber;
-    this.sentTimestamp = obj.sentTimestamp;
+    this.sentTimestamp = obj.sentTimestamp ? (new Date(obj.sentTimestamp)).toLocaleString() : null ;
   }
 }
 
-interface CircleJSON {
+interface ICircleJSON {
   phoneNumber:        string;
   acceptedTimestamp:  string;
   minReminders:       number;
   maxReminders:       number;
 }
 
-export class CCircleJSON implements CircleJSON {
+export class CCircleJSON implements ICircleJSON {
   phoneNumber:        string;
   acceptedTimestamp:  string;
   minReminders:       number;
@@ -87,9 +87,9 @@ export class CCircleJSON implements CircleJSON {
     };
   }
 
-  setObj(obj: CircleJSON) {
+  setObj(obj: ICircleJSON) {
     this.phoneNumber = obj.phoneNumber;
-    this.acceptedTimestamp = obj.acceptedTimestamp;
+    this.acceptedTimestamp = obj.acceptedTimestamp ? (new Date(obj.acceptedTimestamp)).toLocaleString() : null ;
     this.minReminders = obj.minReminders;
     this.maxReminders = obj.maxReminders;
   }
@@ -102,11 +102,15 @@ interface ContactJSON {
   emailsObjAry:       any;
   onYadi:             boolean;
   image:              any;
-  received:           boolean; // True : If part of Invites list, False : If part of Sent List
+  
+  bInvitePresent:     boolean;
+  inviteExtra:        IInviteJSON;
 
-  inviteExtra:        InviteJSON;
-  sentExtra:          SentJSON;
-  circleExtra:        CircleJSON;
+  bSentPresent:       boolean;
+  sentExtra:          ISentJSON;
+
+  bCirclePresent:     boolean;
+  circleExtra:        ICircleJSON;
 }
 
 export class CContactJSON implements ContactJSON{
@@ -116,10 +120,14 @@ export class CContactJSON implements ContactJSON{
   emailsObjAry:       any;
   onYadi:             boolean;
   image:              any;
-  received:           boolean; // True : If part of Invites list, False : If part of Sent List
-
+  
+  bInvitePresent:     boolean = false; // True : If inviteExtra is populated
   inviteExtra:        CInviteJSON = new CInviteJSON();
+
+  bSentPresent:       boolean = false; // True : If sentExtra is populated
   sentExtra:          CSentJSON   = new CSentJSON();
+
+  bCirclePresent:     boolean = false; // True : If circleExtra is populated
   circleExtra:        CCircleJSON = new CCircleJSON();
 
   toJSON() {
@@ -130,10 +138,14 @@ export class CContactJSON implements ContactJSON{
       'emailsObjAry': this.emailsObjAry,
       'onYadi': this.onYadi,
       'image': this.image,
-      'received': this.received,
 
+      'bInvitePresent': this.bInvitePresent,
       'inviteExtra': this.inviteExtra,
+
+      'bSentPresent': this.bSentPresent,
       'sentExtra': this.sentExtra,
+
+      'bCirclePresent': this.bCirclePresent,
       'circleExtra': this.circleExtra
     };
   }
@@ -236,6 +248,7 @@ export class PhoneContactsProvider {
     let _me_ = this;
 
     return Object.assign([], _me_.contactList.filter((item) => {
+
         if(bPhone) {
           return item.phoneNumber.indexOf(searchTerm.toLowerCase()) > -1;
         } else {
@@ -256,7 +269,7 @@ export class PhoneContactsProvider {
       item.inviteExtra.acceptedTimestamp = value.acceptedTimestamp;
       item.inviteExtra.ignoredTimestamp = value.ignoredTimestamp;
       item.inviteExtra.status = value.status;
-      item.received = true;
+      item.bInvitePresent = true;
 
       if(pos > -1) {
         retContacts.push(item);
@@ -268,7 +281,7 @@ export class PhoneContactsProvider {
 
       let item = _me_.contactList[pos];
       item.sentExtra.sentTimestamp = value.sentTimestamp;
-      item.received = false;
+      item.bSentPresent = true;
 
       if(pos > -1) {
         retContacts.push(item);
@@ -278,7 +291,7 @@ export class PhoneContactsProvider {
     return retContacts;
   }
 
-  mapCircleContacts(circleList: any) {
+  mapCircleContacts(circleList: ICircleJSON[]) {
     let _me_ = this;
     let retContacts = [];
 
@@ -286,8 +299,8 @@ export class PhoneContactsProvider {
       var pos = _me_.contactList.findIndex(iter => iter.phoneNumber === value.phoneNumber);
 
       let item = _me_.contactList[pos];
-      item.circleExtra.acceptedTimestamp = value.sentTimestamp;
-      item.received = true;
+      item.circleExtra.acceptedTimestamp = value.acceptedTimestamp ? (new Date(value.acceptedTimestamp)).toLocaleString() : null;
+      item.bCirclePresent = true;
 
       if(pos > -1) {
         retContacts.push(item);
@@ -325,69 +338,85 @@ export class PhoneContactsProvider {
     });
   }
 
-  updateContactsWithCircle(){
+  updateContactsWithCircle(): Promise<any>{
     let _me_ = this;
     
-    _me_.singletonService.storageContacts.forEach((obj, pos, ary) => {
-      if(!obj.onYadi) {
-        _me_.firebaseDBService.getDocumentWithID("UserCircle", obj.phoneNumber).then((data)=>{
-          if(data != null) {
-            if(data.circle) {
-              data.circle.map((x, x_pos, x_ary) => {
-                let index = _me_.contactList.findIndex(iter => iter.phoneNumber === x.phoneNumber);
-            
-                if(index != -1) {
-                  _me_.contactList[index].circleExtra.acceptedTimestamp = x.acceptedTimestamp;
-                  _me_.contactList[index].circleExtra.minReminders      = x.minReminders;
-                  _me_.contactList[index].circleExtra.maxReminders      = x.maxReminders;
-                  _me_.contactList[index].circleExtra.phoneNumber       = x.phoneNumber;
-                }
-              });
+    return new Promise((resolve, reject) => {
+      _me_.singletonService.storageContacts.forEach((obj, pos, ary) => {
+        if(!obj.onYadi) {
+          _me_.firebaseDBService.getDocumentWithID("UserCircle", _me_.singletonService.userAuthInfo.phoneNumber).then((data)=>{
+            if(data != null) {
+              if(data.circle) {
+                data.circle.forEach((x, x_pos, x_ary) => {
+                  let index = _me_.contactList.findIndex(iter => iter.phoneNumber === x.phoneNumber);
+              
+                  if(index != -1) {
+                    _me_.contactList[index].circleExtra.acceptedTimestamp = x.acceptedTimestamp ? (new Date(x.acceptedTimestamp)).toLocaleString() : null;
+                    _me_.contactList[index].circleExtra.minReminders      = x.minReminders;
+                    _me_.contactList[index].circleExtra.maxReminders      = x.maxReminders;
+                    _me_.contactList[index].circleExtra.phoneNumber       = x.phoneNumber;
+                  }
+                });
+              }
             }
-          }
-        }).catch((error) => {
-          console.log(error);
-        });
-      }
+          }).catch((error) => {
+            console.log(error);
+          });
+        }
+      });
+
+      resolve(_me_.contactList);
     });
   }
 
-  updateInvitesWithCircle(){
+  updateContactsWithInvites(){
     let _me_ = this;
     
-    _me_.singletonService.storageContacts.forEach((obj, pos, ary) => {
-      if(!obj.onYadi) {
-        _me_.firebaseDBService.getDocumentWithID("UserInvites", obj.phoneNumber).then((data)=>{
-          if(data != null) {
-            if(data.invites) {
-              data.invites.map((x, x_pos, x_ary) => {
-                let index = _me_.contactList.findIndex(iter => iter.phoneNumber === x.phoneNumber);
-            
-                if(index != -1) {
-                  _me_.contactList[index].inviteExtra.acceptedTimestamp = x.acceptedTimestamp;
-                  _me_.contactList[index].inviteExtra.ignoredTimestamp  = x.ignoredTimestamp;
-                  _me_.contactList[index].inviteExtra.sentTimestamp     = x.sentTimestamp;
-                  _me_.contactList[index].inviteExtra.phoneNumber       = x.phoneNumber;
-                  _me_.contactList[index].inviteExtra.status            = x.status;
-                }
-              });
-            }
+    return new Promise((resolve, reject) => {
+      _me_.singletonService.storageContacts.forEach((obj, pos, ary) => {
+        if(!obj.onYadi) {
+          _me_.firebaseDBService.getDocumentWithID("UserInvites", obj.phoneNumber).then((data)=>{
+            if(data != null) {
+              if(data.invites) {
+                let iIndex = data.invites.findIndex(iter => iter.phoneNumber ===  _me_.singletonService.userAuthInfo.phoneNumber);
 
-            if(data.sent) {
-              data.sent.map((x, x_pos, x_ary) => {
-                let index = _me_.contactList.findIndex(iter => iter.phoneNumber === x.phoneNumber);
-            
-                if(index != -1) {
-                  _me_.contactList[index].sentExtra.sentTimestamp = x.sentTimestamp;
-                  _me_.contactList[index].sentExtra.phoneNumber   = x.phoneNumber;
+                if(iIndex != -1) {
+                  let cIndex = data.contactList.findIndex(iter => iter.phoneNumber ===  obj.phoneNumber);
+
+                  if(cIndex != -1) {
+                    _me_.contactList[cIndex].inviteExtra.acceptedTimestamp = data.invites[iIndex].acceptedTimestamp ? (new Date(data.invites[iIndex].acceptedTimestamp)).toLocaleString() : null;
+                    _me_.contactList[cIndex].inviteExtra.ignoredTimestamp  = data.invites[iIndex].ignoredTimestamp ? (new Date(data.invites[iIndex].ignoredTimestamp)).toLocaleString() : null;
+                    _me_.contactList[cIndex].inviteExtra.sentTimestamp     = data.invites[iIndex].sentTimestamp ? (new Date(data.invites[iIndex].sentTimestamp)).toLocaleString() : null;
+                    _me_.contactList[cIndex].inviteExtra.phoneNumber       = data.invites[iIndex].phoneNumber;
+                    _me_.contactList[cIndex].inviteExtra.status            = data.invites[iIndex].status;
+
+                    _me_.contactList[cIndex].bInvitePresent = true;
+                  }
                 }
-              });
+              }
+
+              if(data.sent) {
+                let sIndex = data.sent.findIndex(iter => iter.phoneNumber ===  _me_.singletonService.userAuthInfo.phoneNumber);
+                
+                if(sIndex != -1) {
+                  let cIndex = data.contactList.findIndex(iter => iter.phoneNumber ===  obj.phoneNumber);
+
+                  if(cIndex != -1) {
+                    _me_.contactList[cIndex].sentExtra.sentTimestamp = data.sent[sIndex].sentTimestamp ? (new Date(data.sent[sIndex].sentTimestamp)).toLocaleString() : null;
+                    _me_.contactList[cIndex].sentExtra.phoneNumber   = data.sent[sIndex].phoneNumber;
+
+                    _me_.contactList[cIndex].bSentPresent = true;
+                  }
+                }
+              }
             }
-          }
-        }).catch((error) => {
-          console.log(error);
-        });
-      }
+          }).catch((error) => {
+            console.log(error);
+          });
+        }
+      });
+
+      resolve(_me_.contactList);
     });
   }
 

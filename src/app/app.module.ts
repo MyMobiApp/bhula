@@ -35,6 +35,7 @@ import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/fi
 import { PhoneContactsProvider } from '../providers/phone-contacts/phone-contacts';
 import { InvitationsProvider } from '../providers/invitations/invitations';
 import { CirclesProvider } from '../providers/circles/circles';
+import { TrieProvider } from '../providers/trie/trie';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { CirclesProvider } from '../providers/circles/circles';
     FirestoreDBServiceProvider,
     PhoneContactsProvider,
     InvitationsProvider,
-    CirclesProvider
+    CirclesProvider,
+    TrieProvider
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

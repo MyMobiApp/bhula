@@ -208,7 +208,9 @@ export class InvitationsProvider {
           // docSnapshot.metadata.fromCache : true, means data is coming from cache
           // and false means from server
           if(docSnapshot.data().invites) {
-            _me_.inviteList = docSnapshot.data().invites.map(x=> {
+            _me_.inviteList = docSnapshot.data().invites.filter((item) => {
+             return item.status == 0; 
+            }).map(x=> {
               let obj : CInviteJSON = new CInviteJSON();
               obj.setObj(x);
 

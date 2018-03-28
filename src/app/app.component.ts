@@ -116,6 +116,9 @@ export class MyApp {
           _me_.bUserLoggedIn = true;
           _me_.nav.setRoot(TabsPage);
         }
+
+        _me_.phoneContacts.updateContactsWithInvites().then((contactList) => {});
+        _me_.phoneContacts.updateContactsWithCircle().then((contactList) => {});
       } else {
         console.log("No user is signed in");
 

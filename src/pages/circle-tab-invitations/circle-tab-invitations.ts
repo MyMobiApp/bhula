@@ -49,10 +49,6 @@ export class CircleTabInvitationsPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CircleTabInvitationsPage');
-  }
-
-  ionViewDidEnter() {
     let _me_ = this;
 
     _me_.invitations.loadInvites(_me_.singletonService.userAuthInfo.phoneNumber).then((list) => {
@@ -61,6 +57,12 @@ export class CircleTabInvitationsPage {
     }).catch((error) => {
       console.log(error);
     });
+  }
+
+  ionViewDidEnter() {
+    let _me_ = this;
+
+    _me_.filterInvites();
   }
 
   filterInvites(){

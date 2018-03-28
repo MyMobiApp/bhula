@@ -22,8 +22,8 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list>
-    <ion-item *ngFor="let contact of filteredContactList">
+  <ion-list [virtualScroll]="filteredContactList">
+    <ion-item *virtualItem="let contact">
       <ion-avatar *ngIf="contact.image" item-start>
         <img [src]="contact.image">
       </ion-avatar>
@@ -31,14 +31,28 @@
       {{contact.displayName}}
       <p>{{contact.phoneNumber}}</p>
       <p ion-text color="danger" *ngIf="contact.onYadi == false">Invite on Yadi</p>
-      <p ion-text color="label" *ngIf="contact.onYadi == true">Add to your Circle</p>
+      <p ion-text color="label" *ngIf="contact.onYadi && !contact.bInvitePresent && !contact.bSentPresent && !contact.bCirclePresent">Add to your Circle</p>
+      <p ion-text color="label" *ngIf="contact.onYadi && contact.bInvitePresent && !contact.bCirclePresent">Circle invitation received</p>
+      <p ion-text color="label" *ngIf="contact.onYadi && contact.bSentPresent && !contact.bCirclePresent">Circle invitation sent</p>
+      <p ion-text color="label" *ngIf="contact.onYadi && contact.bCirclePresent">Already in your Circle</p>
       
-      <button ion-button round [color]="contact.onYadi ? 'label' : 'danger'" (click)="onAddOrInvite(contact.number, contact.onYadi)" item-end>
-        <span *ngIf="contact.onYadi == true" class="button-text-icon">Add&nbsp;</span>
-        <ion-icon *ngIf="contact.onYadi == true" name="add" class="button-text-icon"></ion-icon>
+      <div *ngIf="!contact.bInvitePresent && !contact.bSentPresent && !contact.bCirclePresent" item-end>
+        <button ion-button round [color]="contact.onYadi ? 'label' : 'danger'" (click)="onAddOrInvite(contact.number, contact.onYadi)">
+          <span *ngIf="contact.onYadi == true" class="button-text-icon">Add&nbsp;</span>
+          <ion-icon *ngIf="contact.onYadi == true" name="add" class="button-text-icon"></ion-icon>
 
-        <span *ngIf="contact.onYadi == false" class="button-text-icon">Invite</span>
-      </button>
+          <span *ngIf="contact.onYadi == false" class="button-text-icon">Invite</span>
+        </button>
+      </div>
+      <div *ngIf="contact.bInvitePresent && !contact.bCirclePresent" item-end>
+        <ion-icon name="person-add" class="button-text-icon"></ion-icon>
+      </div>
+      <div *ngIf="contact.bSentPresent && !contact.bCirclePresent" item-end>
+        <ion-icon name="paper-plane" class="button-text-icon"></ion-icon>
+      </div>
+      <div *ngIf="contact.bCirclePresent" item-end>
+        <ion-icon name="md-people" class="button-text-icon"></ion-icon>
+      </div>
       
     </ion-item>
   </ion-list>

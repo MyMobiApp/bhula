@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { AlertController, Platform, NavParams, NavController } from 'ionic-angular';
 import { Firebase } from '@ionic-native/firebase';
 import { Sim } from '@ionic-native/sim';
@@ -38,15 +37,15 @@ export class PhoneLoginComponent {
   constructor(public alertCtrl:AlertController, 
     public navParams: NavParams,
     public navCtrl: NavController,
-    private platform:Platform,
-    private firebasePlugin: Firebase,
+    public platform:Platform,
+    public firebasePlugin: Firebase,
     public objSim: Sim,
     public singletonService: SingletonServiceProvider) {
       this.coumtryCodeArray = (<any>countryCodeObj).countries;
 
       this.coumtryCodeArray.sort((cur, next) => (<string>cur.name) < (<string>next.name) ? -1 : (<string>cur.name) > (<string>next.name) ? 1 : 0);
 
-      /*
+    /*
      * ---------------------------------------
      * Sim Info Retrival
      * ---------------------------------------
@@ -168,6 +167,11 @@ export class PhoneLoginComponent {
   }
 
   signIn(phoneNumber: string){
+    if(!phoneNumber) {
+      alert("Please enter your phone number");
+      return;
+    }
+
     let thisObj = this;
 
     const appVerifier = this.recaptchaVerifier;
