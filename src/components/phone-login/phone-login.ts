@@ -222,10 +222,14 @@ export class PhoneLoginComponent {
   }
 
   onISDCodeChange(isdCode: string) {
-    let ph = this.phoneNumber.substr(this.isdCode.length);
-    
-    this.isdCode = isdCode;
-    this.phoneNumber = this.isdCode + ph;
+    if(this.phoneNumber) {
+      let ph = this.phoneNumber.substr(this.isdCode.length);
+      
+      this.isdCode = isdCode;
+      this.phoneNumber = this.isdCode + ph;
+    } else {
+      this.isdCode = isdCode;
+    }
   }
 
   onTermsAgreed() {

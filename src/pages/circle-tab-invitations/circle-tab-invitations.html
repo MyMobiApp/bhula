@@ -14,6 +14,10 @@
     <ion-spinner class="center-pos"></ion-spinner>
   </div>
 
+  <div *ngIf="!bConnected">
+      <ion-icon name="ionitron" class="button-text-icon"></ion-icon> No internet connection <ion-icon name="close-circle" class="button-text-icon"></ion-icon>
+  </div>
+
   <ion-refresher (ionRefresh)="refreshInvites($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>

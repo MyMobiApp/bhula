@@ -10,7 +10,9 @@ import 'firebase/firestore';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
-import { PhoneContactsProvider, CContactJSON } from '../../providers/phone-contacts/phone-contacts';
+import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
+import { CContactJSON } from '../../contact-interfaces';
+
 import { InvitationsProvider } from '../../providers/invitations/invitations';
 
 /**
@@ -72,7 +74,7 @@ export class CircleTabContactsPage {
   refreshContacts(refresher) {
     let _me_ = this;
 
-    _me_.phoneContacts.loadContacts().then(() => {
+    _me_.phoneContacts.loadContacts().then((contactList) => {
       _me_.filterItems();
 
      refresher.complete();
@@ -90,10 +92,8 @@ export class CircleTabContactsPage {
   onAddOrInvite(phoneNumber: any, bOnYadi: boolean) {
     let inviteString = this.singletonService.shareGenericMsg;
     
-    alert(phoneNumber + " - " + bOnYadi);
-
     if(bOnYadi) {
-      // On Yadi platform add to Circle
+      // On Yaydi platform add to Circle
       this.InviteToCircle(phoneNumber);
     }
     else {

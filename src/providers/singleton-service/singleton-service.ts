@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+import { IContactForStorage, CContactForStorage } from '../../contact-interfaces';
 
 interface StorageContactJSON {
   phoneNumber:  string;
@@ -15,37 +16,67 @@ interface StorageContactJSON {
 */
 @Injectable()
 export class SingletonServiceProvider {
-  public loginState:boolean = false;
-  public userAuthInfo: any = {};
-  public simInfo: any = {};
+  public loginState:boolean       = false;
+  public userAuthInfo: any        = {};
+  public simInfo: any             = {};
   public shareAndroidMsg: string;
   public shareIOSMsg: string;
   public shareGenericMsg: string;
   public shareSubject: string;
-  public playStoreURL: string = "https://goo.gl/rcv5Kv";
-  public appStoreURL: string = "https://goo.gl/rcv5Kv";
-  public storageContacts: StorageContactJSON[] = [] ;
-  public phoneStorageContactsName: string = 'contacts';
+  public playStoreURL: string     = "https://goo.gl/rcv5Kv";
+  public appStoreURL: string      = "https://goo.gl/rcv5Kv";
+  public appName: string          = "Yaydi";
+
+  public contactStorageList: CContactForStorage[] = [];
+  public contactStorageListName: string = 'contactStorageList';
   
   constructor(public storage: Storage) {
-    this.shareAndroidMsg  = "Hey! I am creating my circle on Yadi App, I am forgetful ☺ and this is to let people I trust - remind me whatever they feel important to me. Please install it from Play Store at " + this.playStoreURL + " and let's remind each other 🤘.";
-    this.shareIOSMsg  	  = "Hey! I am creating my circle on Yadi App, I am forgetful ☺ and this is to let people I trust - remind me whatever they feel important to me. Please install it from App Store at " + this.appStoreURL + " and let's remind each other 🤘.";
-    this.shareGenericMsg  = "Hey! I am creating my circle on Yadi App, I am forgetful ☺ and this is to let people I trust - remind me whatever they feel important to me. Please install it from Play Store at " + this.playStoreURL + ", or from App Store at " + this.appStoreURL + " and let's remind each other 🤘.";
+    let _me_ = this;
 
-    this.shareSubject = "Come join me on Yadi App!";
+    _me_.shareAndroidMsg  = "Hey! I am creating my circle on " + _me_.appName + " App, I am forgetful ☺ and this is to let people I trust - remind me whatever they feel important to me. Please install it from Play Store at " + this.playStoreURL + " and let's remind each other 🤘.";
+    _me_.shareIOSMsg  	  = "Hey! I am creating my circle on " + _me_.appName + " App, I am forgetful ☺ and this is to let people I trust - remind me whatever they feel important to me. Please install it from App Store at " + this.appStoreURL + " and let's remind each other 🤘.";
+    _me_.shareGenericMsg  = "Hey! I am creating my circle on " + _me_.appName + " App, I am forgetful ☺ and this is to let people I trust - remind me whatever they feel important to me. Please install it from Play Store at " + this.playStoreURL + ", or from App Store at " + this.appStoreURL + " and let's remind each other 🤘.";
+
+    _me_.shareSubject = "Come join me on " + _me_.appName + " App!";
 
     storage.ready().then((value) => {
-      storage.get(this.phoneStorageContactsName).then((data) => {
-        if(data !== null) {
-          this.storageContacts = JSON.parse(data);
-        }
-      }).catch((error) => {
-        console.log(error);
-      });
+
+      _me_.restoreContactsFromStorage();
+      
     }).catch((error) => {
       console.log(error);
     });
     
+  }
+
+  restoreContactsFromStorage() {
+    let _me_ = this;
+
+    _me_.storage.get(_me_.contactStorageListName).then( (data) => {
+        if(data) {
+          let contactStorageList = JSON.parse(data);
+
+          (<IContactForStorage[]>contactStorageList).forEach((obj, index, ary) => {
+            let contact = new CContactForStorage();
+
+            contact.phoneNumber     = obj.phoneNumber;
+            contact.onYadi          = obj.onYadi;
+
+            contact.bCirclePresent  = obj.bCirclePresent;
+            contact.circleExtra.setObj(obj.circleExtra);
+
+            contact.bInvitePresent  = obj.bInvitePresent;
+            contact.inviteExtra.setObj(obj.inviteExtra);
+
+            contact.bSentPresent    = obj.bSentPresent;
+            contact.sentExtra.setObj(obj.sentExtra);
+
+            _me_.contactStorageList.push(contact);
+          });
+        }
+      }).catch( (error) => {
+        console.log(error);
+      });
   }
 
 }

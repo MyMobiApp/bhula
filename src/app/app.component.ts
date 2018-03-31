@@ -56,7 +56,21 @@ export class MyApp {
     firebase.initializeApp(environment.firebaseConfig);
   }
 
-  onAppReady(){
+  loadPhoneContacts() {
+    let _me_ = this;
+    
+    if(_me_.platform.is('android') || _me_.platform.is('ios')) {
+      _me_.phoneContacts.loadContacts().then(() => {
+        _me_.onAppReady();
+      }).catch((error) => {
+        alert(error);
+      });
+    } else {
+      _me_.onAppReady();
+    }
+  }
+
+  onAppReady() {
     let _me_ = this;
 
     /*
@@ -77,13 +91,9 @@ export class MyApp {
     //alert(JSON.stringify(_me_.singletonService.userAuthInfo));
 
     firebase.auth().onAuthStateChanged(user => {
-      //firebase.firestore().collection("").
       if (user) {
         // User is signed in.
         _me_.singletonService.userAuthInfo = user;
-
-        _me_.circles.loadCircle(user.phoneNumber);
-        _me_.invitations.loadInvites(user.phoneNumber);
 
         _me_.firebaseDBService.getDocumentWithID("Users", user.phoneNumber)
         .then ((data) => {
@@ -112,37 +122,28 @@ export class MyApp {
 
         console.log("user object: " + JSON.stringify(user));
         
+        _me_.phoneContacts.checkContactsOnServer().then((contactList) => {
+          _me_.phoneContacts.updateContactsWithCircle().then((contactList) => {
+            _me_.phoneContacts.updateContactsWithInvites().then((contactList) => {
+              _me_.phoneContacts.pushContactsToStorage();
+            });
+          });
+        });
+
         if(!_me_.bUserLoggedIn) {
           _me_.bUserLoggedIn = true;
           _me_.nav.setRoot(TabsPage);
+          _me_.splashScreen.hide();
         }
-
-        _me_.phoneContacts.updateContactsWithInvites().then((contactList) => {});
-        _me_.phoneContacts.updateContactsWithCircle().then((contactList) => {});
       } else {
         console.log("No user is signed in");
 
         _me_.bUserLoggedIn = false;
         _me_.nav.setRoot(LoginPage);
+        _me_.splashScreen.hide();
       }
-
-      _me_.splashScreen.hide();
     });
     // ---------------------------------------
-  }
-
-  loadPhoneContacts() {
-    let _me_ = this;
-    
-    if(_me_.platform.is('android') || _me_.platform.is('ios')) {
-      _me_.phoneContacts.loadContacts().then(() => {
-        _me_.onAppReady();
-      }).catch((error) => {
-        alert(error);
-      });
-    } else {
-      _me_.onAppReady();
-    }
   }
   
 }

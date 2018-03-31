@@ -26,6 +26,7 @@ import { DatePicker } from '@ionic-native/date-picker';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network';
+import { WheelSelector } from '@ionic-native/wheel-selector';
 
 import { Contacts } from '@ionic-native/contacts';
 
@@ -85,6 +86,7 @@ import { TrieProvider } from '../providers/trie/trie';
     DatePicker,
     SocialSharing,
     Network,
+    WheelSelector,
     SingletonServiceProvider,
     FirestoreDBServiceProvider,
     PhoneContactsProvider,

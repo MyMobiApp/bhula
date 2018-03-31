@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
-import { PhoneContactsProvider, CContactJSON, CInviteJSON, CSentJSON } from '../../providers/phone-contacts/phone-contacts';
+import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
+import { CContactJSON, CInviteJSON, CSentJSON } from '../../contact-interfaces';
 
 /*
   Generated class for the InvitationsProvider provider.

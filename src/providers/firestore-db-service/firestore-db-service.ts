@@ -14,7 +14,7 @@ export class FirestoreDBServiceProvider {
   dbObj:                  firebase.firestore.Firestore;
   connectSubscription:    any;
   disconnectSubscription: any;
-  bConnected:             boolean = false;
+  bConnected:             boolean = true;
   bWIFI:                  boolean = false;
   timerHandle:            any;
   networkSpeed:           string = "";

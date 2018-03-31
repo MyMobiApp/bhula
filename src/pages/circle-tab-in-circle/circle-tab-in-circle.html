@@ -18,6 +18,10 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
+  <div *ngIf="!bConnected">
+      <ion-icon name="ionitron" class="button-text-icon"></ion-icon> No internet connection <ion-icon name="close-circle" class="button-text-icon"></ion-icon>
+  </div>
+
   <ion-list [virtualScroll]="normilizedCircleList">
     <ion-item *virtualItem="let contact">
       <ion-avatar *ngIf="contact.image" item-start>
@@ -29,10 +33,17 @@
       <p>{{contact.circleExtra.acceptedTimestamp}}</p>
       <p ion-text>Minimum Daily: {{contact.circleExtra.minReminders}}</p>
       <p ion-text>Maximum Daily: <span *ngIf="contact.circleExtra.maxReminders < 0">Unlimited</span>
-        <span *ngIf="contact.circleExtra.maxReminders > 0">{{contact.circleExtra.maxReminders}}</span>
+        <span *ngIf="contact.circleExtra.maxReminders > 0">{{contact.circleExtra.maxReminders}}</span>&nbsp;<ion-icon *ngIf="contact.bUpdating" name="alarm" class="button-text-icon"></ion-icon>
       </p>
-      <div item-end>
-        <ion-icon name="md-checkmark-circle-outline" class="button-text-icon"></ion-icon>
+      
+      <div>
+        <!--<ion-icon color="icon" name="md-checkmark-circle-outline" class="button-text-icon"></ion-icon>-->
+        <button ion-button round color="icon" (click)="onSettings(contact.phoneNumber)">
+            <span class="button-text-icon">Settings</span>&nbsp;<ion-icon name="settings" class="button-text-icon"></ion-icon>
+        </button>
+        <button ion-button round color="danger" (click)="onReminder(contact.phoneNumber)" item-end>
+            <span class="button-text-icon">Reminder</span>&nbsp;<ion-icon name="alarm" class="button-text-icon"></ion-icon>
+        </button>
       </div>
       
     </ion-item>

@@ -16,7 +16,7 @@ import { SingletonServiceProvider } from '../../providers/singleton-service/sing
   templateUrl: 'navbar-strip.html'
 })
 export class NavbarStripComponent {
-  title: string = "Yaydi";
+  title: string;
 
   @Output()
   onAddButton: EventEmitter<void> = new EventEmitter<void>();
@@ -25,7 +25,7 @@ export class NavbarStripComponent {
               private socialSharing: SocialSharing, 
               private singletonService: SingletonServiceProvider,
               private platform: Platform) {
-    console.log('Hello ControlStripComponent Component');
+    this.title = singletonService.appName;
   }
 
   presentPopover(myEvent) {

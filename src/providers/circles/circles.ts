@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
-import { PhoneContactsProvider, CContactJSON, CCircleJSON } from '../../providers/phone-contacts/phone-contacts';
+import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
+import { CContactJSON, CCircleJSON } from '../../contact-interfaces';
 
 /*
   Generated class for the CirclesProvider provider.

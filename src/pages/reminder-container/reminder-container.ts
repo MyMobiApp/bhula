@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { ChooseFromCirclesPage } from '../choose-from-circles/choose-from-circles';
+import { IWeeklyFrequency, IReminderJSON, CWeeklyFrequency, CReminderJSON } from '../../reminder-interfaces';
 /**
  * Generated class for the ReminderContainerPage page.
  *
@@ -23,10 +24,10 @@ export class ReminderContainerPage {
     console.log('ionViewDidLoad ReminderContainerPage');
   }
 
-  onNext(data: any) {
-    alert(data);
+  onNext(data: IReminderJSON) {
+    alert( JSON.stringify( (<CReminderJSON>data).toJSON() ) );
 
-    this.navCtrl.push(ChooseFromCirclesPage);
+    this.navCtrl.push(ChooseFromCirclesPage, {'reminder': (<CReminderJSON>data).toJSON()});
   }
 
 }

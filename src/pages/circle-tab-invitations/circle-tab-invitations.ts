@@ -4,7 +4,9 @@ import 'rxjs/add/operator/debounceTime';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
-import { PhoneContactsProvider, CContactJSON } from '../../providers/phone-contacts/phone-contacts';
+import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
+import { CContactJSON } from '../../contact-interfaces';
+
 import { InvitationsProvider } from '../../providers/invitations/invitations';
 import { CirclesProvider } from '../../providers/circles/circles';
 
@@ -22,19 +24,10 @@ import { CirclesProvider } from '../../providers/circles/circles';
   providers: [InvitationsProvider, CirclesProvider]
 })
 export class CircleTabInvitationsPage {
-  loading: boolean = true;
+  loading: boolean;
   searchTerm: string = "";
+  bConnected: boolean = true;
   
-  /*
-  * Invite element
-  * {
-  *   phoneNumber:  _me_.singletonService.userAuthInfo.phoneNumber,
-  *   sentTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
-  *   acceptedTimestamp: null,
-  *   ignoredTimestamp: null,
-  *   status: 0 // Invited: 0, Accepted: 1, Ignored/Rejected: 2
-  * };
-  */
   normilizedInviteList: CContactJSON[] = [];
 
   constructor(public navCtrl: NavController, 
@@ -46,6 +39,12 @@ export class CircleTabInvitationsPage {
               public circles: CirclesProvider) {
     this.invitations.initPhoneContactsAndDB (phoneContacts, firestoreDBService);
     this.circles.initPhoneContactsAndDB (phoneContacts, firestoreDBService);
+
+    this.normilizedInviteList = <CContactJSON[]>(this.phoneContacts.getUserInvitesCollectionList());
+
+    if(this.normilizedInviteList.length == 0) {
+      this.loading = true;
+    }
   }
 
   ionViewDidLoad() {
@@ -60,9 +59,9 @@ export class CircleTabInvitationsPage {
   }
 
   ionViewDidEnter() {
-    let _me_ = this;
+    //let _me_ = this;
 
-    _me_.filterInvites();
+    //_me_.filterInvites();
   }
 
   filterInvites(){
@@ -73,17 +72,22 @@ export class CircleTabInvitationsPage {
 
   refreshInvites(refresher) {
     let _me_ = this;
+    _me_.bConnected = _me_.firestoreDBService.bConnected;
 
-    _me_.invitations.loadInvites(_me_.singletonService.userAuthInfo.phoneNumber).then((list) => {
-      _me_.normilizedInviteList = list;
+    if(_me_.bConnected) {
+      _me_.invitations.loadInvites(_me_.singletonService.userAuthInfo.phoneNumber).then((list) => {
+        _me_.normilizedInviteList = list;
 
+        refresher.complete();
+      }).catch((error) => {
+        console.log(error);
+
+        refresher.complete();
+      });
+    }
+    else {
       refresher.complete();
-    }).catch((error) => {
-      console.log(error);
-
-      refresher.complete();
-    });
-
+    }
   }
 
   onAccept(phoneNumber) {

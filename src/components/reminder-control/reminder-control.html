@@ -1,21 +1,34 @@
 <!-- Generated template for the ReminderControlComponent component -->
+<div class="error">{{validationErrorMessage}}</div>
 <ion-list>
   <ion-item>
     <ion-icon color="icon" name="create" item-start></ion-icon>
     <ion-label color="label" floating>Title</ion-label>
-    <ion-input type="text" [(ngModel)]="title" item-end></ion-input>
+    <ion-input type="text" [(ngModel)]="reminder.title" item-end></ion-input>
   </ion-item>
   <ion-item>
     <ion-icon color="icon" name="text" item-start></ion-icon>
-    <ion-textarea color="label" [(ngModel)]="description" placeholder="Enter a description (optional)" item-end></ion-textarea>
+    <ion-textarea color="label" [(ngModel)]="reminder.description" placeholder="Enter a description (optional)" item-end></ion-textarea>
   </ion-item>
   <ion-item (click)="onDatePicker()">
     <ion-icon color="icon" name="calendar" item-start></ion-icon>
-    <div><p color="label">Pick date</p></div>
+    <div><p color="label">{{reminder.date}}</p></div>
   </ion-item>
   <ion-item (click)="onTimePicker()">
     <ion-icon color="icon" name="time" item-start></ion-icon>
-    <div><p color="label">Pick time</p></div>
+    <div><p color="label">{{reminder.time}}</p></div>
+  </ion-item>
+  <ion-item item-content>
+    <ion-icon color="icon" name="pricetag" item-start></ion-icon>
+    <ion-select placeholder="Frequency (optional)" [(ngModel)]="weekFreq" (ionChange)="onWeekdaySelectChange(weekFreq)" multiple="true" interface="popover">
+        <ion-option value="0">Sunday</ion-option>
+        <ion-option value="1">Monday</ion-option>
+        <ion-option value="2">Tuesday</ion-option>
+        <ion-option value="3">Wednesday</ion-option>
+        <ion-option value="4">Thursday</ion-option>
+        <ion-option value="5">Friday</ion-option>
+        <ion-option value="6">Saturday</ion-option>
+    </ion-select>
   </ion-item>
   <ion-item>
     <ion-icon color="icon" name="map" item-start></ion-icon>
@@ -23,5 +36,5 @@
   </ion-item>
 </ion-list>
 <button ion-button full icon-end color="label" (click)="onNext()">
-  Select from Circle <ion-icon name="arrow-dropright"></ion-icon>
+  {{nextButtonText}} <ion-icon name="arrow-dropright"></ion-icon>
 </button>

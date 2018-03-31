@@ -1,6 +1,6 @@
 {
-  "name": "yadi",
-  "app_id": "",
+  "name": "Yaydi",
+  "app_id": "com.mastishka.yadiapp",
   "type": "ionic-angular",
   "integrations": {
     "cordova": {}
