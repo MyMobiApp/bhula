@@ -33,7 +33,7 @@ export class SettingsPopoverPage {
 
   logoutUser() {
     firebase.auth().signOut();
-    this.firebasePlugin.unsubscribe(this.singletonService.fcmPushTopicAddReminder);
+    this.firebasePlugin.unregister(); // Un-register push notifications
 
     this.viewCtrl.dismiss();
   }

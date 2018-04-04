@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Platform, Nav, NavController } from 'ionic-angular';
 import { Firebase } from '@ionic-native/firebase';
+import { BackgroundMode } from '@ionic-native/background-mode';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -24,6 +25,7 @@ import { InvitationsProvider } from '../providers/invitations/invitations';
 export class MyApp {
   rootPage:any ;//= LoginPage;
   bUserLoggedIn: boolean = false;
+  fcmPushToken: any;
 
   @ViewChild(Nav) nav: Nav;
   @ViewChild('yaydiApp') navCtrl: NavController;
@@ -36,7 +38,8 @@ export class MyApp {
               public invitations: InvitationsProvider,
               public singletonService:SingletonServiceProvider,
               public firebaseDBService: FirestoreDBServiceProvider,
-              public firebasePlugin: Firebase) {
+              public firebasePlugin: Firebase,
+              public backgroundMode: BackgroundMode) {
     if(environment.production == true) {
       enableProdMode();
     }
@@ -46,22 +49,9 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
 
-      firebasePlugin.getToken().then(token => {
-        // Your best bet is to here store the token on the user's profile on the
-        // Firebase database, so that when you want to send notifications to this 
-        // specific user you can do it from Cloud Functions.
-        alert(token);
-      });
-      firebasePlugin.subscribe(singletonService.fcmPushTopicAddReminder).then((value) => {
-        alert(value);
-      }, (error) => {
-        alert("Error : " + error);
-      });
-      firebasePlugin.onTokenRefresh().subscribe(token => {
-        alert(token);
-        //backend.registerToken(token);
-      });
-
+      // Enable background mode for app
+      _me_.backgroundMode.enable();
+      
       // Initialize Firestore DB service
       _me_.firebaseDBService.initFirestoreDB(firebase);
       // Initialize Phone Contacts Provider
@@ -70,6 +60,7 @@ export class MyApp {
       _me_.circles.initPhoneContactsAndDB(_me_.phoneContacts, _me_.firebaseDBService);
 
       _me_.loadPhoneContacts();
+      _me_.initPushNotifications();
       _me_.subscribeToPushNotifications();
 
       statusBar.styleDefault();
@@ -169,6 +160,56 @@ export class MyApp {
       }
     });
     // ---------------------------------------
+  }
+
+  initPushNotifications(){
+    let _me_ = this;
+    
+
+    _me_.firebasePlugin.getToken().then(token => {
+      // Your best bet is to here store the token on the user's profile on the
+      // Firebase database, so that when you want to send notifications to this 
+      // specific user you can do it from Cloud Functions.
+      // alert(token);
+      _me_.updatePushTokenInDB(token);
+    });
+
+    _me_.firebasePlugin.onTokenRefresh().subscribe(token => {
+      // alert(token);
+      _me_.updatePushTokenInDB(token);
+    });
+
+    _me_.firebasePlugin.subscribe(_me_.singletonService.fcmPushTopicAddReminder).then((value) => {
+      alert(value);
+    }, (error) => {
+      alert("Error : " + error);
+    });
+  }
+
+  updatePushTokenInDB(token: any){
+    let _me_ = this;
+
+    _me_.firebaseDBService.
+      getDocumentWithID("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber).
+      then((data) => {
+        if(data != null) {
+          if(data.fcmPushToken){
+            _me_.fcmPushToken = data.fcmPushToken;
+
+            _me_.firebaseDBService.
+            updateDocument("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber, {'fcmPushToken' : token}).
+            then((value) => {
+              // Record added
+            });
+          }
+        } else {
+          _me_.firebaseDBService.
+          addDocument("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber, {'fcmPushToken' : token}).
+          then((value) => {
+            // Record added
+          });
+        }
+      });
   }
   
   subscribeToPushNotifications() {

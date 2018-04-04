@@ -28,6 +28,8 @@ import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network';
 import { WheelSelector } from '@ionic-native/wheel-selector';
 import { Contacts } from '@ionic-native/contacts';
+import { BackgroundMode } from '@ionic-native/background-mode';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 import { ComponentsModule } from '../components/components.module';
 import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
@@ -87,6 +89,8 @@ import { ReminderProvider } from '../providers/reminder/reminder';
     SocialSharing,
     Network,
     WheelSelector,
+    BackgroundMode,
+    LocalNotifications,
     SingletonServiceProvider,
     FirestoreDBServiceProvider,
     PhoneContactsProvider,
