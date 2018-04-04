@@ -147,8 +147,6 @@ export class CircleTabInCirclePage {
               let pos = data.circle.findIndex(iter => iter.phoneNumber === forPhoneNumber);
 
               if(pos != -1) {
-                let maxVal = data.circle[pos].maxReminders == -1 ? "Unlimited" : data.circle[pos].maxReminders;
-
                 if(result[0].description == "Unlimited") {
                   data.circle[pos].maxReminders = -1;
                 } else {

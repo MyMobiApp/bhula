@@ -4,8 +4,7 @@ import { Contacts } from '@ionic-native/contacts';
 import { Storage } from '@ionic/storage';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { IInviteJSON, CInviteJSON, ISentJSON, CSentJSON }  from '../../contact-interfaces';
-import { ICircleJSON, CCircleJSON, IContactJSON, CContactJSON }  from '../../contact-interfaces';
+import { ICircleJSON, IContactJSON, CContactJSON }  from '../../contact-interfaces';
 import { IContactForStorage, CContactForStorage } from '../../contact-interfaces';
 
 

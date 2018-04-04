@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { IWeeklyFrequency, IReminderJSON, CWeeklyFrequency, CReminderJSON } from '../../reminder-interfaces';
+import { CReminderJSON } from '../../reminder-interfaces';
 import { CContactJSON } from '../../contact-interfaces';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { ChooseFromCirclesPage } from '../choose-from-circles/choose-from-circles';
-import { IWeeklyFrequency, IReminderJSON, CWeeklyFrequency, CReminderJSON } from '../../reminder-interfaces';
+import { IReminderJSON, CReminderJSON } from '../../reminder-interfaces';
 /**
  * Generated class for the ReminderContainerPage page.
  *

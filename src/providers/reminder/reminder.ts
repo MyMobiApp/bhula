@@ -3,10 +3,8 @@ import { Storage } from '@ionic/storage';
 
 import { CReminderJSON, IReminderJSON } from '../../reminder-interfaces';
 
-import * as firebase from 'firebase';
 import { SingletonServiceProvider } from '../singleton-service/singleton-service';
 import { FirestoreDBServiceProvider } from '../firestore-db-service/firestore-db-service';
-import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
 
 /*
   Generated class for the ReminderProvider provider.

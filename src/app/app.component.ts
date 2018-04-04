@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Nav } from 'ionic-angular';
+import { Platform, Nav, NavController } from 'ionic-angular';
+import { Firebase } from '@ionic-native/firebase';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -17,13 +18,15 @@ import { CirclesProvider } from '../providers/circles/circles';
 import { InvitationsProvider } from '../providers/invitations/invitations';
 
 @Component({
-  templateUrl: 'app.html'
+  templateUrl: 'app.html',
+  providers: [Firebase]
 })
 export class MyApp {
   rootPage:any ;//= LoginPage;
   bUserLoggedIn: boolean = false;
 
   @ViewChild(Nav) nav: Nav;
+  @ViewChild('yaydiApp') navCtrl: NavController;
   
   constructor(public platform: Platform, 
               public statusBar: StatusBar, 
@@ -32,7 +35,8 @@ export class MyApp {
               public circles: CirclesProvider,
               public invitations: InvitationsProvider,
               public singletonService:SingletonServiceProvider,
-              public firebaseDBService: FirestoreDBServiceProvider) {
+              public firebaseDBService: FirestoreDBServiceProvider,
+              public firebasePlugin: Firebase) {
     if(environment.production == true) {
       enableProdMode();
     }
@@ -42,6 +46,22 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
 
+      firebasePlugin.getToken().then(token => {
+        // Your best bet is to here store the token on the user's profile on the
+        // Firebase database, so that when you want to send notifications to this 
+        // specific user you can do it from Cloud Functions.
+        alert(token);
+      });
+      firebasePlugin.subscribe(singletonService.fcmPushTopicAddReminder).then((value) => {
+        alert(value);
+      }, (error) => {
+        alert("Error : " + error);
+      });
+      firebasePlugin.onTokenRefresh().subscribe(token => {
+        alert(token);
+        //backend.registerToken(token);
+      });
+
       // Initialize Firestore DB service
       _me_.firebaseDBService.initFirestoreDB(firebase);
       // Initialize Phone Contacts Provider
@@ -50,6 +70,8 @@ export class MyApp {
       _me_.circles.initPhoneContactsAndDB(_me_.phoneContacts, _me_.firebaseDBService);
 
       _me_.loadPhoneContacts();
+      _me_.subscribeToPushNotifications();
+
       statusBar.styleDefault();
     });
 
@@ -84,7 +106,8 @@ export class MyApp {
 
     if(_me_.singletonService.userAuthInfo) {
       _me_.bUserLoggedIn = true;
-      _me_.nav.setRoot(TabsPage);
+      _me_.rootPage = TabsPage;
+      //_me_.nav.setRoot(TabsPage);
       _me_.splashScreen.hide();
     }
     
@@ -132,18 +155,31 @@ export class MyApp {
 
         if(!_me_.bUserLoggedIn) {
           _me_.bUserLoggedIn = true;
-          _me_.nav.setRoot(TabsPage);
+          _me_.rootPage = TabsPage;
+          //_me_.nav.setRoot(TabsPage);
           _me_.splashScreen.hide();
         }
       } else {
         console.log("No user is signed in");
 
         _me_.bUserLoggedIn = false;
-        _me_.nav.setRoot(LoginPage);
+        _me_.rootPage = LoginPage;
+        //_me_.nav.setRoot(LoginPage);
         _me_.splashScreen.hide();
       }
     });
     // ---------------------------------------
   }
   
+  subscribeToPushNotifications() {
+    this.firebasePlugin.onNotificationOpen().subscribe( data => {
+      if(data.wasTapped){
+        //Notification was received on device tray and tapped by the user.
+        alert("Notification was received on device tray and tapped by the user.");
+      }else{
+        //Notification was received in foreground. Maybe the user needs to be notified.
+        alert("Notification was received in foreground. Maybe the user needs to be notified.");
+      }
+    });
+  }
 }

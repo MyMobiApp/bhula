@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
-import { CReminderJSON, IReminderJSON } from '../../reminder-interfaces';
+import { CReminderJSON } from '../../reminder-interfaces';
 import { ReminderProvider } from '../../providers/reminder/reminder';
 
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';

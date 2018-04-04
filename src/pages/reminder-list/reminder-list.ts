@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AlertController, NavController } from 'ionic-angular';
 
-import { CReminderJSON, IReminderJSON } from '../../reminder-interfaces';
+import { CReminderJSON } from '../../reminder-interfaces';
 import { ReminderProvider } from '../../providers/reminder/reminder';
 
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
@@ -21,8 +21,7 @@ export class ReminderListPage {
   constructor(public navCtrl: NavController, 
     private reminder: ReminderProvider,
     private singletonService: SingletonServiceProvider,
-    private firestoreDBService: FirestoreDBServiceProvider, 
-    private alertCtrl:AlertController) {
+    private firestoreDBService: FirestoreDBServiceProvider) {
       let _me_ = this ;
 
       _me_.reminder.initFirestoreAndSingleton(firestoreDBService, singletonService);

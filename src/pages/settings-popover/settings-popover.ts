@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { Firebase } from '@ionic-native/firebase';
 
-import * as firebase from 'firebase';
+import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 
 /**
  * Generated class for the SettingsPopoverPage page.
@@ -17,7 +18,9 @@ import * as firebase from 'firebase';
 })
 export class SettingsPopoverPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public viewCtrl: ViewController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, 
+              public viewCtrl: ViewController, public firebasePlugin: Firebase,
+              public singletonService: SingletonServiceProvider) {
   }
 
   ionViewDidLoad() {
@@ -30,6 +33,7 @@ export class SettingsPopoverPage {
 
   logoutUser() {
     firebase.auth().signOut();
+    this.firebasePlugin.unsubscribe(this.singletonService.fcmPushTopicAddReminder);
 
     this.viewCtrl.dismiss();
   }

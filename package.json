@@ -20,10 +20,13 @@
     "@angular/http": "5.0.3",
     "@angular/platform-browser": "5.0.3",
     "@angular/platform-browser-dynamic": "5.0.3",
+    "@ionic-native/background-mode": "^4.6.0",
     "@ionic-native/contacts": "^4.5.3",
     "@ionic-native/core": "4.4.0",
     "@ionic-native/date-picker": "^4.5.3",
+    "@ionic-native/fcm": "^4.6.0",
     "@ionic-native/firebase": "^4.5.3",
+    "@ionic-native/local-notifications": "^4.6.0",
     "@ionic-native/network": "^4.5.3",
     "@ionic-native/sim": "^4.5.3",
     "@ionic-native/sms": "^4.5.3",
@@ -36,12 +39,15 @@
     "@types/immutable": "^3.8.7",
     "cordova-android": "~7.0.0",
     "cordova-browser": "~5.0.3",
+    "cordova-plugin-background-mode": "^0.7.2",
+    "cordova-plugin-badge": "^0.8.7",
     "cordova-plugin-contacts": "^3.0.1",
     "cordova-plugin-datepicker": "^0.9.3",
     "cordova-plugin-device": "^2.0.1",
     "cordova-plugin-firebase": "^0.1.25",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
     "cordova-plugin-ionic-webview": "^1.1.16",
+    "cordova-plugin-local-notification": "^0.9.0-beta.2",
     "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-sim": "^1.3.3",
     "cordova-plugin-splashscreen": "^5.0.2",
@@ -71,7 +77,6 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-ionic-keyboard": {},
-      "cordova-plugin-firebase": {},
       "cordova-plugin-sim": {},
       "cordova-plugin-contacts": {},
       "cordova-plugin-datepicker": {},
@@ -79,11 +84,14 @@
       "cordova-plugin-x-socialsharing": {},
       "cordova-plugin-network-information": {},
       "cordova-sqlite-storage": {},
-      "cordova-wheel-selector-plugin": {}
+      "cordova-wheel-selector-plugin": {},
+      "cordova-plugin-firebase": {},
+      "cordova-plugin-local-notification": {},
+      "cordova-plugin-background-mode": {}
     },
     "platforms": [
-      "android",
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }

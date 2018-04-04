@@ -27,7 +27,6 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network';
 import { WheelSelector } from '@ionic-native/wheel-selector';
-
 import { Contacts } from '@ionic-native/contacts';
 
 import { ComponentsModule } from '../components/components.module';

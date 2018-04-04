@@ -3,11 +3,6 @@ import { Storage } from '@ionic/storage';
 
 import { IContactForStorage, CContactForStorage } from '../../contact-interfaces';
 
-interface StorageContactJSON {
-  phoneNumber:  string;
-  onYadi:       boolean;
-}
-
 /*
   Generated class for the SingletonServiceProvider provider.
 
@@ -34,6 +29,9 @@ export class SingletonServiceProvider {
   public recdStorageName: string = "receivedReminders" ;
   public sentList:     any = [];
   public receivedList: any = [];
+
+  public fcmPushTopicAddReminder = "addReminder";
+  public fcmPushTopicRemind = "remind";
   
   constructor(private storage: Storage) {
     let _me_ = this;

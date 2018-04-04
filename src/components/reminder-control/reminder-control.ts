@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatePicker } from '@ionic-native/date-picker';
 
-import { IWeeklyFrequency, IReminderJSON, CWeeklyFrequency, CReminderJSON } from '../../reminder-interfaces';
+import { IReminderJSON, CReminderJSON } from '../../reminder-interfaces';
 
 /**
  * Generated class for the ReminderControlComponent component.

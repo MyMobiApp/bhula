@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { PopoverController, Platform } from 'ionic-angular';
 import { SocialSharing } from '@ionic-native/social-sharing';
 
