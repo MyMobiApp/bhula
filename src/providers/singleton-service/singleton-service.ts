@@ -29,8 +29,13 @@ export class SingletonServiceProvider {
 
   public contactStorageList: CContactForStorage[] = [];
   public contactStorageListName: string = 'contactStorageList';
+
+  public sentStorageName: string = "sentReminders" ;
+  public recdStorageName: string = "receivedReminders" ;
+  public sentList:     any = [];
+  public receivedList: any = [];
   
-  constructor(public storage: Storage) {
+  constructor(private storage: Storage) {
     let _me_ = this;
 
     _me_.shareAndroidMsg  = "Hey! I am creating my circle on " + _me_.appName + " App, I am forgetful ☺ and this is to let people I trust - remind me whatever they feel important to me. Please install it from Play Store at " + this.playStoreURL + " and let's remind each other 🤘.";
@@ -42,6 +47,7 @@ export class SingletonServiceProvider {
     storage.ready().then((value) => {
 
       _me_.restoreContactsFromStorage();
+      _me_.restoreRemindersFromStorage();
       
     }).catch((error) => {
       console.log(error);
@@ -77,6 +83,22 @@ export class SingletonServiceProvider {
       }).catch( (error) => {
         console.log(error);
       });
+  }
+
+  restoreRemindersFromStorage() {
+    let _me_ = this;
+
+    _me_.storage.get(_me_.recdStorageName).then((list) => {
+      if(list) {
+        _me_.receivedList = list;
+      }
+    });
+
+    _me_.storage.get(_me_.sentStorageName).then((list) => {
+      if(list) {
+        _me_.sentList = list;
+      }
+    });
   }
 
 }

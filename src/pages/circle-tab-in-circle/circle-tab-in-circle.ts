@@ -25,9 +25,9 @@ import { CirclesProvider } from '../../providers/circles/circles';
 export class CircleTabInCirclePage {
   loading: boolean ;
   searchTerm: string = "";
-  normilizedCircleList: CContactJSON[] = [];
+  normalizedCircleList: CContactJSON[] = [];
 
-  bConnected: boolean = true;
+  bInternetConnected: boolean = true;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -38,9 +38,9 @@ export class CircleTabInCirclePage {
               private selector: WheelSelector) {
     this.circles.initPhoneContactsAndDB (phoneContacts, firestoreDBService);
 
-    this.normilizedCircleList = <CContactJSON[]>(this.phoneContacts.getUserCirclesCollectionList());
+    this.normalizedCircleList = <CContactJSON[]>(this.phoneContacts.getUserCirclesCollectionList());
 
-    if(this.normilizedCircleList.length == 0) {
+    if(this.normalizedCircleList.length == 0) {
       this.loading = true;
     }
   }
@@ -50,7 +50,7 @@ export class CircleTabInCirclePage {
 
     _me_.circles.loadCircle(_me_.singletonService.userAuthInfo.phoneNumber).then((list) => {
       _me_.loading = false;
-      _me_.normilizedCircleList = list;
+      _me_.normalizedCircleList = list;
     }).catch((error) => {
       console.log(error);
     });
@@ -65,16 +65,16 @@ export class CircleTabInCirclePage {
   filterCircle(){
     let _me_ = this;
 
-    _me_.normilizedCircleList = _me_.circles.filterCircle(_me_.searchTerm);
+    _me_.normalizedCircleList = _me_.circles.filterCircle(_me_.searchTerm);
   }
 
   refreshCircleList(refresher) {
     let _me_ = this;
-    _me_.bConnected = _me_.firestoreDBService.bConnected;
+    _me_.bInternetConnected = _me_.firestoreDBService.bInternetConnected;
 
-    if(_me_.bConnected) {
+    if(_me_.bInternetConnected) {
       _me_.circles.loadCircle(_me_.singletonService.userAuthInfo.phoneNumber).then((list) => {
-        _me_.normilizedCircleList = list;
+        _me_.normalizedCircleList = list;
   
         refresher.complete();
       }).catch((error) => {
@@ -93,7 +93,7 @@ export class CircleTabInCirclePage {
 
     let idx_s = _me_.singletonService.contactStorageList.findIndex(iter => iter.phoneNumber === forPhoneNumber);
     let idx_c = _me_.phoneContacts.contactList.findIndex(iter => iter.phoneNumber === forPhoneNumber);
-    let idx_n = _me_.normilizedCircleList.findIndex(iter => iter.phoneNumber === forPhoneNumber);
+    let idx_n = _me_.normalizedCircleList.findIndex(iter => iter.phoneNumber === forPhoneNumber);
     
     let maxVal;
     if(_me_.singletonService.contactStorageList[idx_s].circleExtra.maxReminders == -1)
@@ -138,7 +138,7 @@ export class CircleTabInCirclePage {
       ]
     }).then(
       result => {
-        _me_.normilizedCircleList[idx_n].bUpdating = true;
+        _me_.normalizedCircleList[idx_n].bUpdating = true;
 
         _me_.firestoreDBService.
         getDocumentWithID("UserCircle", _me_.singletonService.userAuthInfo.phoneNumber).then( (data) => {
@@ -163,7 +163,7 @@ export class CircleTabInCirclePage {
 
                   _me_.filterCircle();
 
-                  _me_.normilizedCircleList[idx_n].bUpdating = false;
+                  _me_.normalizedCircleList[idx_n].bUpdating = false;
                   //alert("Updated on server");
                 }).catch((error) => {
                   console.log(error);

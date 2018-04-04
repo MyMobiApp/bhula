@@ -3,15 +3,28 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-card *ngFor="let item of reminderArray;">
-      <ion-card-header>
-        Header {{item.id}}
-      </ion-card-header>
-      <ion-card-content>
-          {{item.name}}
-      </ion-card-content>
-    </ion-card>
-  <!--<button ion-button block (click)="send()">Send OTP!</button>
-  <ion-input type="text" placeholder="Enter OTP" [(ngModel)]="code"></ion-input>
-  <button ion-button block (click)="verify()">Verify!</button>-->
+  <div *ngIf="loading == true" class="spinner-container">
+    <p>Loading ...</p>
+    <ion-spinner class="center-pos"></ion-spinner>
+  </div>
+
+  <div *ngIf="!bInternetConnected" class="spinner-container">
+      <ion-icon name="ionitron" class="button-text-icon"></ion-icon> No internet connection <ion-icon name="close-circle" class="button-text-icon"></ion-icon>
+  </div>
+
+  <ion-refresher (ionRefresh)="refreshReminders($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card *ngFor="let reminder of receivedList;">
+    <ion-card-header>
+        {{reminder.title}}
+    </ion-card-header>
+    <ion-card-content>
+      <ion-card-title>{{reminder.description}}</ion-card-title>
+      <p>On {{reminder.date}}</p>
+      <p>At {{reminder.time}}</p>
+      <p color="icon">From {{reminder.displayName}} &lt; {{reminder.phoneNumber}} &gt;</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

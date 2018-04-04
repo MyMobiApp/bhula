@@ -1,57 +1,70 @@
 import { Component } from '@angular/core';
 import { AlertController, NavController } from 'ionic-angular';
-import {Firebase} from '@ionic-native/firebase';
 
-import * as firebase from 'firebase';
+import { CReminderJSON, IReminderJSON } from '../../reminder-interfaces';
+import { ReminderProvider } from '../../providers/reminder/reminder';
+
+import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
+import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 
 @Component({
   selector: 'page-reminder-list',
-  templateUrl: 'reminder-list.html',
-  providers: [Firebase]
+  templateUrl: 'reminder-list.html'
 })
 export class ReminderListPage {
-  verificationId: any;
-  code: string = "";
-  reminderArray: { id: number, name: string }[] = [
-    { "id": 0, "name": "Available" },
-    { "id": 1, "name": "Ready" },
-    { "id": 2, "name": "Started" }
-  ];
+  loading: boolean ;
+  searchTerm: string = "";
+  bInternetConnected: boolean = true;
 
-  constructor(public navCtrl: NavController, private firebasePlugin: Firebase, private alertCtrl:AlertController) {
-    
+  receivedList: CReminderJSON[] = [];
+
+  constructor(public navCtrl: NavController, 
+    private reminder: ReminderProvider,
+    private singletonService: SingletonServiceProvider,
+    private firestoreDBService: FirestoreDBServiceProvider, 
+    private alertCtrl:AlertController) {
+      let _me_ = this ;
+
+      _me_.reminder.initFirestoreAndSingleton(firestoreDBService, singletonService);
+
+      if(_me_.reminder.receivedList.length == 0) {
+        _me_.loading = true;
+      }else {
+        _me_.receivedList = _me_.reminder.getRecdList();
+      }
+      
+      reminder.loadReminders().then( () => {
+        _me_.receivedList = reminder.receivedList ;
+        _me_.loading = false;
+      }).catch((error) => {
+        _me_.loading = false;
+
+        console.log(error);
+      });
   }
 
-  send() {
-    try {
-      this.firebasePlugin.verifyPhoneNumber("+919039579039", 60).then (credential=> {
-        alert("SMS Sent Successfully - " + JSON.stringify(credential.verificationId));
-        console.log(credential);
-        
-        this.verificationId = credential.verificationId;
-      }).catch (error => {
-        console.error(error);
-      });
-    }
-    catch(error) {
-      alert(error.message)
-    }
+  filterReminders(){
+    let _me_ = this;
+
+    _me_.receivedList = _me_.reminder.filterRemindersReceived(_me_.searchTerm);
   }
 
-  verify() {
-    let signinCredential = firebase.auth.PhoneAuthProvider.credential(this.verificationId, this.code);
+  refreshReminders(refresher) {
+    let _me_ = this;
+    _me_.bInternetConnected = _me_.firestoreDBService.bInternetConnected;
 
-    firebase.auth().signInWithCredential(signinCredential).then((info)=>{
-      alert("Sign-in Success");
-      console.log(info);
-    }, (error) => {
-      let alert = this.alertCtrl.create({
-        title: 'Login Error',
-        subTitle: error,
-        buttons: ['Dismiss']
+    if(_me_.bInternetConnected) {
+      _me_.reminder.loadReminders().then((list) => {
+        _me_.receivedList = _me_.reminder.receivedList;
+  
+        refresher.complete();
+      }).catch((error) => {
+        console.log(error);
+  
+        refresher.complete();
       });
-      alert.present();
-      console.log(error);
-    });
+    } else {
+      refresher.complete();
+    }
   }
 }

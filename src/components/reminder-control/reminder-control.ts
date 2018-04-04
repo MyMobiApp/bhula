@@ -42,7 +42,7 @@ export class ReminderControlComponent {
       androidTheme: this.datePicker.ANDROID_THEMES.THEME_HOLO_DARK
     }).then(
       date => {
-        _me_.reminder.date = date.toJSON();
+        _me_.reminder.date = date.toDateString();
       },
       err => alert(err)
     );
@@ -57,7 +57,7 @@ export class ReminderControlComponent {
       androidTheme: this.datePicker.ANDROID_THEMES.THEME_HOLO_DARK
     }).then(
       time => {
-        _me_.reminder.time = time.toJSON();
+        _me_.reminder.time = time.toTimeString();
       },
       err => alert(err)
     );
@@ -68,25 +68,25 @@ export class ReminderControlComponent {
     
     weekFreq.forEach(element => {
       switch (element) {
-        case 0:
+        case '0':
           _me_.reminder.weeklyFrequency.bSunday = true;
         break;
-        case 1:
+        case '1':
           _me_.reminder.weeklyFrequency.bMonday = true;
         break;
-        case 2:
+        case '2':
           _me_.reminder.weeklyFrequency.bTuesday = true;
         break;
-        case 3:
+        case '3':
           _me_.reminder.weeklyFrequency.bWednesday = true;
         break;
-        case 4:
+        case '4':
           _me_.reminder.weeklyFrequency.bThursday = true;
         break;
-        case 5:
+        case '5':
           _me_.reminder.weeklyFrequency.bFriday = true;
         break;
-        case 6:
+        case '6':
           _me_.reminder.weeklyFrequency.bSaturday = true;
         break;
       }
@@ -95,27 +95,30 @@ export class ReminderControlComponent {
     //alert(JSON.stringify(weekFreq));
   }
 
+  /*
+  Google Map API Key: AIzaSyAIQ5bdSwzgay5koRFkBksjwSfZC0WZjrQ
+  */
   onNext() {
     let _me_ = this;
     let bError = false;
-    alert(JSON.stringify(_me_.reminder.toJSON()));
+    //alert(JSON.stringify(_me_.reminder.toJSON()));
 
     _me_.validationErrorMessage = "";
     if(!_me_.reminder.title) {
-      _me_.validationErrorMessage += "📑 Title of reminder can't be empty.\n";
+      _me_.validationErrorMessage += "📑 - Title of reminder can't be empty.\n";
       bError = true;
     }
 
     if(!_me_.reminder.date || _me_.reminder.date === _me_.datePlaceholder) {
-      _me_.validationErrorMessage += "📅 Date of reminder must be chosen.\n";
+      _me_.validationErrorMessage += "📅 - Date of reminder must be chosen.\n";
       bError = true;
     }
 
     if(!_me_.reminder.time || _me_.reminder.time === _me_.timePlaceholder) {
-      _me_.validationErrorMessage += "⏰ Time of reminder must be chosen.\n";
+      _me_.validationErrorMessage += "⏰ - Time of reminder must be chosen.\n";
       bError = true;
     }
-    
+
     if(!bError) {
       this.onSelectFromCircle.emit(_me_.reminder);
     }

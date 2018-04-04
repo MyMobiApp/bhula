@@ -4,11 +4,11 @@
   <ion-item>
     <ion-icon color="icon" name="create" item-start></ion-icon>
     <ion-label color="label" floating>Title</ion-label>
-    <ion-input type="text" [(ngModel)]="reminder.title" item-end></ion-input>
+    <ion-input type="text" [(ngModel)]="reminder.title"></ion-input>
   </ion-item>
   <ion-item>
     <ion-icon color="icon" name="text" item-start></ion-icon>
-    <ion-textarea color="label" [(ngModel)]="reminder.description" placeholder="Enter a description (optional)" item-end></ion-textarea>
+    <ion-textarea color="label" [(ngModel)]="reminder.description" placeholder="Enter a description (optional)"></ion-textarea>
   </ion-item>
   <ion-item (click)="onDatePicker()">
     <ion-icon color="icon" name="calendar" item-start></ion-icon>

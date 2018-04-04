@@ -2,12 +2,14 @@ reminder-control {
     ion-select{
         width: 100%;
         max-width: 100%;
-      }
-
+    }
+      
     .error {
         color: #E34220;
         //font-style: oblique;
-        font-size: 0.875em;
+        //font-size: 0.875em;
         white-space: pre-wrap;
+        width: 100%;
+        text-align: center;
     }
 }

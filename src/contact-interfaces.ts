@@ -67,7 +67,7 @@ export class CCircleJSON implements ICircleJSON {
   acceptedTimestamp:  string;
   minReminders:       number;
   maxReminders:       number;
-  status:             number;
+  status:             number  = 0;
 
   toJSON() {
     return {
@@ -96,6 +96,7 @@ export interface IContactJSON {
   onYadi:             boolean;
   image:              any;
   bUpdating:          boolean;
+  bSelected:          boolean;
   
   bInvitePresent:     boolean;
   inviteExtra:        IInviteJSON;
@@ -115,6 +116,8 @@ export class CContactJSON implements IContactJSON{
   onYadi:             boolean;
   image:              any;
   bUpdating:          boolean = false;
+  bSelected:          boolean = false;
+  
   
   bInvitePresent:     boolean = false; // True : If inviteExtra is populated
   inviteExtra:        CInviteJSON = new CInviteJSON();
@@ -134,6 +137,7 @@ export class CContactJSON implements IContactJSON{
       'onYadi': this.onYadi,
       'image': this.image,
       'bUpdating': this.bUpdating,
+      'bSelected' : this.bSelected,
 
       'bInvitePresent': this.bInvitePresent,
       'inviteExtra': this.inviteExtra.toJSON(),
@@ -142,7 +146,7 @@ export class CContactJSON implements IContactJSON{
       'sentExtra': this.sentExtra.toJSON(),
 
       'bCirclePresent': this.bCirclePresent,
-      'circleExtra': this.circleExtra.toJSON()
+      'circleExtra': this.circleExtra.toJSON(),
     };
   }
 }

@@ -26,7 +26,7 @@ import { CirclesProvider } from '../../providers/circles/circles';
 export class CircleTabInvitationsPage {
   loading: boolean;
   searchTerm: string = "";
-  bConnected: boolean = true;
+  bInternetConnected: boolean = true;
   
   normilizedInviteList: CContactJSON[] = [];
 
@@ -72,9 +72,9 @@ export class CircleTabInvitationsPage {
 
   refreshInvites(refresher) {
     let _me_ = this;
-    _me_.bConnected = _me_.firestoreDBService.bConnected;
+    _me_.bInternetConnected = _me_.firestoreDBService.bInternetConnected;
 
-    if(_me_.bConnected) {
+    if(_me_.bInternetConnected) {
       _me_.invitations.loadInvites(_me_.singletonService.userAuthInfo.phoneNumber).then((list) => {
         _me_.normilizedInviteList = list;
 

@@ -25,8 +25,6 @@ export class ReminderContainerPage {
   }
 
   onNext(data: IReminderJSON) {
-    alert( JSON.stringify( (<CReminderJSON>data).toJSON() ) );
-
     this.navCtrl.push(ChooseFromCirclesPage, {'reminder': (<CReminderJSON>data).toJSON()});
   }
 

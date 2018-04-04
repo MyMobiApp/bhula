@@ -18,11 +18,11 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="!bConnected">
+  <div *ngIf="!bInternetConnected" class="spinner-container">
       <ion-icon name="ionitron" class="button-text-icon"></ion-icon> No internet connection <ion-icon name="close-circle" class="button-text-icon"></ion-icon>
   </div>
 
-  <ion-list [virtualScroll]="normilizedCircleList">
+  <ion-list [virtualScroll]="normalizedCircleList">
     <ion-item *virtualItem="let contact">
       <ion-avatar *ngIf="contact.image" item-start>
         <img [src]="contact.image">

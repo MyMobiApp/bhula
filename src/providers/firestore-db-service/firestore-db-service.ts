@@ -14,7 +14,7 @@ export class FirestoreDBServiceProvider {
   dbObj:                  firebase.firestore.Firestore;
   connectSubscription:    any;
   disconnectSubscription: any;
-  bConnected:             boolean = true;
+  bInternetConnected:     boolean = true;
   bWIFI:                  boolean = false;
   timerHandle:            any;
   networkSpeed:           string = "";
@@ -48,15 +48,15 @@ export class FirestoreDBServiceProvider {
   }
 
   onNetworkConnected() {
-    this.bConnected = true;
+    this.bInternetConnected = true;
 
-    alert(this.networkSpeed + ", WIFI : " + this.bWIFI);
+    //alert(this.networkSpeed + ", WIFI : " + this.bWIFI);
   }
 
   onNetworkDisconnected() {
-    this.bConnected = false;
+    this.bInternetConnected = false;
 
-    alert("Network Disconnected!");
+    //alert("Network Disconnected!");
   }
 
   initFirestoreDB(firebase: any) {

@@ -3,5 +3,29 @@
 </ion-header>
 
 <ion-content padding>
-  {{tokenId}}
+  <div *ngIf="loading == true" class="spinner-container">
+    <p>Loading ...</p>
+    <ion-spinner class="center-pos"></ion-spinner>
+  </div>
+
+  <div *ngIf="!bInternetConnected" class="spinner-container">
+      <ion-icon name="ionitron" class="button-text-icon"></ion-icon> No internet connection <ion-icon name="close-circle" class="button-text-icon"></ion-icon>
+  </div>
+
+  <ion-refresher (ionRefresh)="refreshTriggers($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card *ngFor="let reminder of sentList;">
+    <ion-card-header>
+      {{reminder.title}}
+    </ion-card-header>
+    <ion-card-content>
+      <ion-card-title>{{reminder.description}}</ion-card-title>
+      <p>On {{reminder.date}}</p>
+      <p>At {{reminder.time}}</p>
+      <p color="icon">From {{reminder.displayName}} &lt; {{reminder.phoneNumber}} &gt;</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
+

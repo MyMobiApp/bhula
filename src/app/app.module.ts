@@ -37,6 +37,7 @@ import { PhoneContactsProvider } from '../providers/phone-contacts/phone-contact
 import { InvitationsProvider } from '../providers/invitations/invitations';
 import { CirclesProvider } from '../providers/circles/circles';
 import { TrieProvider } from '../providers/trie/trie';
+import { ReminderProvider } from '../providers/reminder/reminder';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { TrieProvider } from '../providers/trie/trie';
     PhoneContactsProvider,
     InvitationsProvider,
     CirclesProvider,
-    TrieProvider
+    TrieProvider,
+    ReminderProvider
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
