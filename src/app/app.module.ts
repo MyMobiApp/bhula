@@ -38,7 +38,8 @@ import { PhoneContactsProvider } from '../providers/phone-contacts/phone-contact
 import { InvitationsProvider } from '../providers/invitations/invitations';
 import { CirclesProvider } from '../providers/circles/circles';
 import { TrieProvider } from '../providers/trie/trie';
-import { ReminderProvider } from '../providers/reminder/reminder';
+import { ReminderServiceProvider } from '../providers/reminder-service/reminder-service';
+import { NotificationServiceProvider } from '../providers/notification-service/notification-service';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,8 @@ import { ReminderProvider } from '../providers/reminder/reminder';
     InvitationsProvider,
     CirclesProvider,
     TrieProvider,
-    ReminderProvider
+    ReminderServiceProvider,
+    NotificationServiceProvider
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

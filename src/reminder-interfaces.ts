@@ -42,6 +42,7 @@ export class CWeeklyFrequency implements IWeeklyFrequency {
 }
   
 export interface IReminderJSON {
+    id:           number;
     title:        string;
     description:  string;
     date:         string;
@@ -49,12 +50,29 @@ export interface IReminderJSON {
     location:     string;
     phoneNumber:  string; // In received list it's sender phone humber and sent list receiver phone number.
     displayName:  string; // Name of sender/receiver
-    status:       number; // 0: Received/Sent, 1: Accepted, 2: Ignored, 3: Canceled by Receiver, 4: Cancel by Sender
+    /*
+     * Status Values
+     * 0: Received/Sent, 
+     * 1: Accepted, 
+     * 2: Ignored by Receiver, 
+     * 3: Cancel by Sender,
+     * 4: Done
+     */
+    status:       number; 
   
     weeklyFrequency: IWeeklyFrequency;
 }
-  
+
+export enum ReminderStatus {
+  ReceivedOrSent = 0,
+  Accepted,
+  IgnoredByReceiver,
+  CanceledBySender,
+  Done
+}
+
 export class CReminderJSON implements IReminderJSON {
+    id:           number;
     title:        string;
     description:  string;
     date:         string;
@@ -62,11 +80,20 @@ export class CReminderJSON implements IReminderJSON {
     location:     string;
     phoneNumber:  string;
     displayName:  string;
+    /*
+     * Status Values
+     * 0: Received/Sent, 
+     * 1: Accepted, 
+     * 2: Ignored by Receiver, 
+     * 3: Cancel by Sender,
+     * 4: Done
+     */
     status:       number = 0; 
   
     weeklyFrequency: CWeeklyFrequency = new CWeeklyFrequency();
   
     setObj(obj: IReminderJSON){
+      this.id          = obj.id ? obj.id : 0;
       this.title       = obj.title ? obj.title : null;
       this.description = obj.description ? obj.description : null;
       this.date        = obj.date ? obj.date : null;
@@ -92,6 +119,7 @@ export class CReminderJSON implements IReminderJSON {
   
     toJSON() {
       return {
+        'id':               this.id,
         'title':            this.title,
         'description':      this.description,
         'date':             this.date,
@@ -99,6 +127,7 @@ export class CReminderJSON implements IReminderJSON {
         'location':         this.location,
         'phoneNumber':      this.phoneNumber,
         'status':           this.status,
+        'displayName':      this.displayName,
 
         'weeklyFrequency':  this.weeklyFrequency.toJSON()
       };

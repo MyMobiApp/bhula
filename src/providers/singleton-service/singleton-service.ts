@@ -30,8 +30,8 @@ export class SingletonServiceProvider {
   public sentList:     any = [];
   public receivedList: any = [];
 
-  public fcmPushTopicAddReminder = "addReminder";
-  public fcmPushTopicRemind = "remind";
+  public fcmPushTopicBroadcast = "broadcast";
+  public fcmPushTopicABTest = "ABTest";
   
   constructor(private storage: Storage) {
     let _me_ = this;

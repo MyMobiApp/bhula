@@ -16,15 +16,34 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card *ngFor="let reminder of receivedList;">
-    <ion-card-header>
-        {{reminder.title}}
-    </ion-card-header>
-    <ion-card-content>
-      <ion-card-title>{{reminder.description}}</ion-card-title>
-      <p>On {{reminder.date}}</p>
-      <p>At {{reminder.time}}</p>
-      <p color="icon">From {{reminder.displayName}} &lt; {{reminder.phoneNumber}} &gt;</p>
-    </ion-card-content>
-  </ion-card>
+  <ng-container *ngFor="let reminder of receivedList;">
+    <ion-card *ngIf="reminder.status < 2">
+      <ion-card-header>
+          {{reminder.title}}
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-avatar item-start>
+            <img [src]="alarmIcon">
+          </ion-avatar>
+          <p>On {{reminder.date}}</p>
+          <p>At {{reminder.time}}</p>
+          <p color="icon">From {{reminder.displayName}} &lt; {{reminder.phoneNumber}} &gt;</p>
+          <p>{{reminder.description}}</p>
+          <p *ngIf="reminder.status == 0">Reminder received</p>
+          <p *ngIf="reminder.status == 1">Reminder accepted !</p>
+          <div>
+            <button *ngIf="reminder.status == 0" ion-button round color="label" (click)="onAccept(reminder.phoneNumber)">
+              <span class="button-text-icon">Accept&nbsp;</span>
+              <ion-icon name="checkmark" class="button-text-icon"></ion-icon>
+            </button>
+            <button ion-button round color="danger" (click)="onIgnore(reminder.phoneNumber)">
+              <span class="button-text-icon">Ignore&nbsp;</span>
+              <ion-icon name="close" class="button-text-icon"></ion-icon>
+            </button>
+          </div>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
 </ion-content>

@@ -21,10 +21,30 @@
       {{reminder.title}}
     </ion-card-header>
     <ion-card-content>
-      <ion-card-title>{{reminder.description}}</ion-card-title>
-      <p>On {{reminder.date}}</p>
-      <p>At {{reminder.time}}</p>
-      <p color="icon">From {{reminder.displayName}} &lt; {{reminder.phoneNumber}} &gt;</p>
+      <ion-item>
+        <ion-avatar item-start>
+          <img [src]="reminderIcon">
+        </ion-avatar>
+        <p>On {{reminder.date}}</p>
+        <p>At {{reminder.time}}</p>
+        <p color="icon">From {{reminder.displayName}} &lt; {{reminder.phoneNumber}} &gt;</p>
+        <p>{{reminder.description}}</p>
+        <p *ngIf="reminder.status == 0">Reminder sent</p>
+        <p *ngIf="reminder.status == 1">Reminder accepted !</p>
+        <p *ngIf="reminder.status == 2">Reminder ignored by receiver</p>
+        <p *ngIf="reminder.status == 3">Reminder canceled by sender</p>
+        <p *ngIf="reminder.status == 4">Completed !</p>
+        <div>
+          <button ion-button round color="danger" (click)="onSMS(reminder.phoneNumber)">
+            <span class="button-text-icon">SMS&nbsp;</span>
+            <ion-icon name="mail" class="button-text-icon"></ion-icon>
+          </button>
+          <button ion-button round color="icon" (click)="onCancel(reminder.phoneNumber)">
+            <span class="button-text-icon">Cancel&nbsp;</span>
+            <ion-icon name="close" class="button-text-icon"></ion-icon>
+          </button>
+        </div>
+      </ion-item>
     </ion-card-content>
   </ion-card>
 </ion-content>

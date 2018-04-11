@@ -40,11 +40,11 @@
       -->
 
       <div *ngIf="contact.bInvitePresent">
-        <button ion-button round color="label" (click)="onAccept(contact.number)">
+        <button ion-button round color="label" (click)="onAccept(contact.phoneNumber)">
           <span class="button-text-icon">Accept&nbsp;</span>
           <ion-icon name="checkmark" class="button-text-icon"></ion-icon>
         </button>
-        <button ion-button round color="danger" (click)="onIgnore(contact.number)">
+        <button ion-button round color="danger" (click)="onIgnore(contact.phoneNumber)">
           <span class="button-text-icon">Ignore&nbsp;</span>
           <ion-icon name="close" class="button-text-icon"></ion-icon>
         </button>

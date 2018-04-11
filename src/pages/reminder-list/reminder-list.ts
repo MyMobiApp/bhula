@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { AlertController, NavController } from 'ionic-angular';
 
-import { CReminderJSON } from '../../reminder-interfaces';
-import { ReminderProvider } from '../../providers/reminder/reminder';
-
+import { CReminderJSON, ReminderStatus } from '../../reminder-interfaces';
+import { ReminderServiceProvider } from '../../providers/reminder-service/reminder-service';
+import { NotificationServiceProvider } from '../../providers/notification-service/notification-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 
@@ -18,13 +18,16 @@ export class ReminderListPage {
 
   receivedList: CReminderJSON[] = [];
 
+  alarmIcon: any = "assets/icon/alarm-bell-icon.ico";
+
   constructor(public navCtrl: NavController, 
-    private reminder: ReminderProvider,
+    private reminder: ReminderServiceProvider,
     private singletonService: SingletonServiceProvider,
-    private firestoreDBService: FirestoreDBServiceProvider) {
+    private firestoreDBService: FirestoreDBServiceProvider,
+    private notificationService: NotificationServiceProvider) {
       let _me_ = this ;
 
-      _me_.reminder.initFirestoreAndSingleton(firestoreDBService, singletonService);
+      _me_.reminder.initProviders(firestoreDBService, singletonService, notificationService);
 
       if(_me_.reminder.receivedList.length == 0) {
         _me_.loading = true;
@@ -39,6 +42,10 @@ export class ReminderListPage {
         _me_.loading = false;
 
         console.log(error);
+      });
+
+      this.reminder.receivedSubscriber.subscribe((recdReminder) => {
+        _me_.receivedList = recdReminder;
       });
   }
 
@@ -66,4 +73,17 @@ export class ReminderListPage {
       refresher.complete();
     }
   }
+
+  onAccept(phoneNumber: string) {
+    let _me_ = this;
+    //alert("onAccept");
+    _me_.reminder.changeReceivedStatus(phoneNumber, ReminderStatus.Accepted);
+  }
+  
+  onIgnore(phoneNumber: string) {
+    let _me_ = this;
+    //alert("onIgnore");
+    _me_.reminder.changeSentStatus(phoneNumber, ReminderStatus.IgnoredByReceiver);
+  }
+  
 }

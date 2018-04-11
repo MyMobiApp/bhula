@@ -10,7 +10,7 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { environment } from '../environments/enviroment';
 
 import * as firebase from 'firebase';
-import {enableProdMode} from '@angular/core';
+import { enableProdMode } from '@angular/core';
 
 import { SingletonServiceProvider } from '../providers/singleton-service/singleton-service';
 import { FirestoreDBServiceProvider } from '../providers/firestore-db-service/firestore-db-service';
@@ -25,8 +25,7 @@ import { InvitationsProvider } from '../providers/invitations/invitations';
 export class MyApp {
   rootPage:any ;//= LoginPage;
   bUserLoggedIn: boolean = false;
-  fcmPushToken: any;
-
+  
   @ViewChild(Nav) nav: Nav;
   @ViewChild('yaydiApp') navCtrl: NavController;
   
@@ -40,6 +39,7 @@ export class MyApp {
               public firebaseDBService: FirestoreDBServiceProvider,
               public firebasePlugin: Firebase,
               public backgroundMode: BackgroundMode) {
+    //console.dir();
     if(environment.production == true) {
       enableProdMode();
     }
@@ -60,8 +60,6 @@ export class MyApp {
       _me_.circles.initPhoneContactsAndDB(_me_.phoneContacts, _me_.firebaseDBService);
 
       _me_.loadPhoneContacts();
-      _me_.initPushNotifications();
-      _me_.subscribeToPushNotifications();
 
       statusBar.styleDefault();
     });
@@ -108,6 +106,8 @@ export class MyApp {
       if (user) {
         // User is signed in.
         _me_.singletonService.userAuthInfo = user;
+        // Initialize push notifications
+        _me_.initPushNotifications();
 
         _me_.firebaseDBService.getDocumentWithID("Users", user.phoneNumber)
         .then ((data) => {
@@ -164,6 +164,16 @@ export class MyApp {
 
   initPushNotifications(){
     let _me_ = this;
+
+    _me_.initPushToken();
+    
+    _me_.subscribeToDevicePushNotifications();
+    _me_.subscribeToTopicPushNotifications(_me_.singletonService.fcmPushTopicBroadcast);
+    _me_.subscribeToTopicPushNotifications(_me_.singletonService.fcmPushTopicABTest);
+  }
+
+  initPushToken() {
+    let _me_ = this;
     
 
     _me_.firebasePlugin.getToken().then(token => {
@@ -178,41 +188,33 @@ export class MyApp {
       // alert(token);
       _me_.updatePushTokenInDB(token);
     });
-
-    _me_.firebasePlugin.subscribe(_me_.singletonService.fcmPushTopicAddReminder).then((value) => {
-      alert(value);
-    }, (error) => {
-      alert("Error : " + error);
-    });
   }
 
   updatePushTokenInDB(token: any){
     let _me_ = this;
-
+    
     _me_.firebaseDBService.
-      getDocumentWithID("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber).
-      then((data) => {
-        if(data != null) {
-          if(data.fcmPushToken){
-            _me_.fcmPushToken = data.fcmPushToken;
-
-            _me_.firebaseDBService.
-            updateDocument("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber, {'fcmPushToken' : token}).
-            then((value) => {
-              // Record added
-            });
-          }
-        } else {
+    getDocumentWithID("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber).
+    then((data) => {
+      if(data != null) {
+        if(data.fcmPushToken){
           _me_.firebaseDBService.
-          addDocument("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber, {'fcmPushToken' : token}).
+          updateDocument("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber, {'fcmPushToken' : token}).
           then((value) => {
             // Record added
           });
         }
-      });
+      } else {
+        _me_.firebaseDBService.
+        addDocument("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber, {'fcmPushToken' : token}).
+        then((value) => {
+          // Record added
+        });
+      }
+    });
   }
   
-  subscribeToPushNotifications() {
+  subscribeToDevicePushNotifications() {
     this.firebasePlugin.onNotificationOpen().subscribe( data => {
       if(data.wasTapped){
         //Notification was received on device tray and tapped by the user.
@@ -221,6 +223,16 @@ export class MyApp {
         //Notification was received in foreground. Maybe the user needs to be notified.
         alert("Notification was received in foreground. Maybe the user needs to be notified.");
       }
+    });
+  }
+
+  subscribeToTopicPushNotifications(topic: string) {
+    let _me_ = this;
+
+    _me_.firebasePlugin.subscribe(topic).then((value) => {
+      //alert(value);
+    }, (error) => {
+      alert("Error : " + error);
     });
   }
 }

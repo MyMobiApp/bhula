@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { CReminderJSON } from '../../reminder-interfaces';
+import { CReminderJSON, ReminderStatus } from '../../reminder-interfaces';
 import { CContactJSON } from '../../contact-interfaces';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
 import { CirclesProvider } from '../../providers/circles/circles';
+import { ReminderServiceProvider } from '../../providers/reminder-service/reminder-service';
 
 /**
  * Generated class for the ChooseFromCirclesPage page.
@@ -36,7 +37,8 @@ export class ChooseFromCirclesPage {
               public singletonService:SingletonServiceProvider,
               public firestoreDBService: FirestoreDBServiceProvider,
               public phoneContacts: PhoneContactsProvider,
-              public circles: CirclesProvider) {
+              public circles: CirclesProvider,
+              public reminderService: ReminderServiceProvider) {
     this.reminder.setObj(navParams.get('reminder'));
     
     //alert(JSON.stringify( this.reminder.toJSON() ));
@@ -115,85 +117,19 @@ export class ChooseFromCirclesPage {
 
     _me_.normalizedCircleList.forEach((obj, pos, ary) => {
       if(obj.bSelected) {
-        _me_.updateReceivedListFor(obj.phoneNumber);
-
         _me_.reminder.phoneNumber = obj.phoneNumber;
         _me_.reminder.displayName = obj.displayName;
+        _me_.reminder.status      = ReminderStatus.ReceivedOrSent;
         
+        _me_.reminderService.updateReceivedListFor(obj.phoneNumber, _me_.reminder);
         sentList.push(_me_.reminder.toJSON());
 
         obj.bSelected = false;
       }
     });
 
-    _me_.updateSentListForMe(sentList);
+    _me_.reminderService.updateSentListForMe(sentList);
     
     _me_.navCtrl.pop();
-  }
-
-  updateReceivedListFor(phoneNumber: string) {
-    let _me_ = this;
-
-    _me_.firestoreDBService.getDocumentWithID("UserReminders", phoneNumber).then( (uReminders) => {
-      if(uReminders != null ) {
-        let receivedList = uReminders.received ? uReminders.received : [];
-
-        _me_.reminder.phoneNumber = _me_.singletonService.userAuthInfo.phoneNumber;
-        receivedList.push( _me_.reminder.toJSON() );
-        
-        _me_.firestoreDBService.updateDocument("UserReminders", phoneNumber, {'received': receivedList}).then(data => {
-          // Document updated
-          alert("Reminder has set for < " + phoneNumber + " >");
-        }, error => {
-          alert(error)
-        }).catch( (excp) => {
-          alert(excp);
-        });
-      } else {
-        let receivedList = [];
-
-        receivedList.push( _me_.reminder.toJSON() );
-        
-        _me_.firestoreDBService.addDocument("UserReminders", phoneNumber, {'received': receivedList}).then(data => {
-          // Document added
-          alert("Reminder has set for < " + phoneNumber + " >");
-        }, error => {
-          alert(error)
-        }).catch( (excp) => {
-          alert(excp);
-        });
-      }
-    }).catch( (error) => {
-      alert(error);
-    });
-    
-  }
-
-  updateSentListForMe(sentList: any) {
-    let _me_ = this;
-
-    _me_.firestoreDBService.getDocumentWithID("UserReminders", _me_.singletonService.userAuthInfo.phoneNumber).then( (uReminders) => {
-      if(uReminders != null) {
-        let dbSentList = uReminders.sent ? uReminders.sent.concat(sentList) : [];
-
-        _me_.firestoreDBService.updateDocument("UserReminders", _me_.singletonService.userAuthInfo.phoneNumber, {'sent': dbSentList}).then(data => {
-          // Document updated
-        }, error => {
-          alert(error)
-        }).catch( (excp) => {
-          alert(excp);
-        });
-      } else {
-        _me_.firestoreDBService.addDocument("UserReminders", _me_.singletonService.userAuthInfo.phoneNumber, {'sent': sentList}).then(data => {
-          // Document updated
-        }, error => {
-          alert(error)
-        }).catch( (excp) => {
-          alert(excp);
-        });
-      }
-    }).catch( (error) => {
-      alert(error);
-    });
   }
 }
