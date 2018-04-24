@@ -16,6 +16,7 @@ import { ChooseFromCirclesPage }    from '../pages/choose-from-circles/choose-fr
 import { CircleTabInCirclePage }    from '../pages/circle-tab-in-circle/circle-tab-in-circle';
 import { CircleTabInvitationsPage } from '../pages/circle-tab-invitations/circle-tab-invitations';
 import { CircleTabContactsPage }    from '../pages/circle-tab-contacts/circle-tab-contacts';
+import { ReminderPopoverPage }      from '../pages/reminder-popover/reminder-popover';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -54,7 +55,8 @@ import { NotificationServiceProvider } from '../providers/notification-service/n
     ChooseFromCirclesPage,
     CircleTabInCirclePage,
     CircleTabInvitationsPage,
-    CircleTabContactsPage
+    CircleTabContactsPage,
+    ReminderPopoverPage
   ],
   imports: [
     BrowserModule,
@@ -76,7 +78,8 @@ import { NotificationServiceProvider } from '../providers/notification-service/n
     ChooseFromCirclesPage,
     CircleTabInCirclePage,
     CircleTabInvitationsPage,
-    CircleTabContactsPage
+    CircleTabContactsPage,
+    ReminderPopoverPage
   ],
   providers: [
     StatusBar,

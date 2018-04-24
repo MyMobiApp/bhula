@@ -189,48 +189,53 @@ export class ReminderServiceProvider {
   updateReceivedListFor(phoneNumber: string, reminder: IReminderJSON) {
     let _me_ = this;
 
-    _me_.firestoreDBService.getDocumentWithID("UserReminders", phoneNumber).then( (uReminders) => {
-      if(uReminders != null ) {
-        let itemCount    = uReminders.itemCount ? uReminders.itemCount : 0;
-        let receivedList = uReminders.received ? uReminders.received : [];
+    try{
+      _me_.firestoreDBService.getDocumentWithID("UserReminders", phoneNumber).then( (uReminders) => {
+        if(uReminders != null ) {
+          let itemCount    = uReminders.itemCount ? uReminders.itemCount : 0;
+          let receivedList = uReminders.received ? uReminders.received : [];
+          
+          itemCount++;
 
-        itemCount++;
+          reminder.id          = itemCount;
+          reminder.phoneNumber = _me_.singletonService.userAuthInfo.phoneNumber;
+          
+          receivedList.push( (<CReminderJSON>reminder).toJSON() );
+          
+          _me_.firestoreDBService.
+          updateDocument("UserReminders", phoneNumber, {'itemCount': itemCount, 'received': receivedList}).
+          then(data => {
+            // Document updated
+            alert("Reminder has set for < " + phoneNumber + " >");
+          }, error => {
+            alert(error)
+          }).catch( (excp) => {
+            alert(excp);
+          });
+        } else {
+          let itemCount    = 1;
+          let receivedList = [];
 
-        reminder.id          = itemCount;
-        reminder.phoneNumber = _me_.singletonService.userAuthInfo.phoneNumber;
-        receivedList.push( (<CReminderJSON>reminder).toJSON() );
-        
-        _me_.firestoreDBService.
-        updateDocument("UserReminders", phoneNumber, {'itemCount': itemCount, 'received': receivedList}).
-        then(data => {
-          // Document updated
-          alert("Reminder has set for < " + phoneNumber + " >");
-        }, error => {
-          alert(error)
-        }).catch( (excp) => {
-          alert(excp);
-        });
-      } else {
-        let itemCount    = 1;
-        let receivedList = [];
-
-        reminder.id          = itemCount;
-        receivedList.push( (<CReminderJSON>reminder).toJSON() );
-        
-        _me_.firestoreDBService.
-        addDocument("UserReminders", phoneNumber, {'itemCount': itemCount, 'received': receivedList}).
-        then(data => {
-          // Document added
-          alert("Reminder has set for < " + phoneNumber + " >");
-        }, error => {
-          alert(error)
-        }).catch( (excp) => {
-          alert(excp);
-        });
-      }
-    }).catch( (error) => {
-      alert(error);
-    });
+          reminder.id          = itemCount;
+          receivedList.push( (<CReminderJSON>reminder).toJSON() );
+          
+          _me_.firestoreDBService.
+          addDocument("UserReminders", phoneNumber, {'itemCount': itemCount, 'received': receivedList}).
+          then(data => {
+            // Document added
+            alert("Reminder has set for < " + phoneNumber + " >");
+          }, error => {
+            alert(error)
+          }).catch( (excp) => {
+            alert(excp);
+          });
+        }
+      }).catch( (error) => {
+        alert(error);
+      });
+    } catch (e){
+      alert(e);
+    }
     
   }
 

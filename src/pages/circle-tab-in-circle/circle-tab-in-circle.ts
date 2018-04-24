@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { App, IonicPage, NavController, NavParams, PopoverController, AlertController } from 'ionic-angular';
 
-import { WheelSelector } from '@ionic-native/wheel-selector';
+import { WheelSelector, WheelSelectorData } from '@ionic-native/wheel-selector';
 
 import { FirestoreDBServiceProvider } from '../../providers/firestore-db-service/firestore-db-service';
 import { SingletonServiceProvider } from '../../providers/singleton-service/singleton-service';
 import { PhoneContactsProvider } from '../../providers/phone-contacts/phone-contacts';
 import { CContactJSON }  from '../../contact-interfaces';
 import { CirclesProvider } from '../../providers/circles/circles';
+
+import { ReminderPopoverPage } from '../../pages/reminder-popover/reminder-popover';
 
 /**
  * Generated class for the CircleTabInCirclePage page.
@@ -19,8 +21,7 @@ import { CirclesProvider } from '../../providers/circles/circles';
 @IonicPage()
 @Component({
   selector: 'page-circle-tab-in-circle',
-  templateUrl: 'circle-tab-in-circle.html',
-  providers: [CirclesProvider]
+  templateUrl: 'circle-tab-in-circle.html'
 })
 export class CircleTabInCirclePage {
   loading: boolean ;
@@ -28,14 +29,18 @@ export class CircleTabInCirclePage {
   normalizedCircleList: CContactJSON[] = [];
 
   bInternetConnected: boolean = true;
+  forPhoneNumber: string = "";
 
-  constructor(public navCtrl: NavController,
+  constructor(public app: App,
+              public navCtrl: NavController,
+              public alertCtrl: AlertController,
               public navParams: NavParams,
               public singletonService:SingletonServiceProvider,
               public firestoreDBService: FirestoreDBServiceProvider,
               public phoneContacts: PhoneContactsProvider,
               public circles: CirclesProvider,
-              private selector: WheelSelector) {
+              public selector: WheelSelector,
+              public popoverCtrl: PopoverController) {
     this.circles.initPhoneContactsAndDB (phoneContacts, firestoreDBService);
 
     this.normalizedCircleList = <CContactJSON[]>(this.phoneContacts.getUserCirclesCollectionList());
@@ -103,6 +108,9 @@ export class CircleTabInCirclePage {
       maxVal = _me_.singletonService.contactStorageList[idx_s].circleExtra.maxReminders;
     }
 
+    let statusAry = ["In Circle", "Mute", "Remove"];
+    let circleStatus = statusAry[_me_.singletonService.contactStorageList[idx_s].circleExtra.status] ;
+
     var wheelData = {
       maxValues: [
           {description: "2"},
@@ -117,9 +125,9 @@ export class CircleTabInCirclePage {
           {description: "Unlimited"}
       ],
       inclusionValues: [
-        {description: "In Circle"},
-        {description: "Mute"},
-        {description: "Remove"}
+        {description: statusAry[0]},
+        {description: statusAry[1]},
+        {description: statusAry[2]}
       ]
     };
 
@@ -134,11 +142,26 @@ export class CircleTabInCirclePage {
       negativeButtonText: "Cancel",
       defaultItems: [
         {index: 0, value: maxVal},
-        {index: 1, value: "In Circle"}
+        {index: 1, value: circleStatus}
       ]
     }).then(
       result => {
-        _me_.normalizedCircleList[idx_n].bUpdating = true;
+        _me_.onWheelSuccess(result, idx_s, idx_c, idx_n, forPhoneNumber, statusAry);
+      
+    },
+      err => console.log('Error: ', err)
+    );
+  }
+
+  private onWheelSuccess(result: WheelSelectorData, 
+                        idx_s: number, 
+                        idx_c: number, 
+                        idx_n: number,
+                        forPhoneNumber: string,
+                        statusAry: string[]) {
+    let _me_ = this;
+
+    _me_.normalizedCircleList[idx_n].bUpdating = true;
 
         _me_.firestoreDBService.
         getDocumentWithID("UserCircle", _me_.singletonService.userAuthInfo.phoneNumber).then( (data) => {
@@ -153,11 +176,44 @@ export class CircleTabInCirclePage {
                   data.circle[pos].maxReminders = result[0].description;
                 }
 
+                statusAry.forEach((obj, objPos, ary) => {
+                  if(obj == result[1].description) {
+                    if(objPos > 0) {
+                      let alert = _me_.alertCtrl.create({
+                        title: 'Confirm '+result[1].description,
+                        message: 'Do you want to '+result[1].description+' this contact from circle?',
+                        buttons: [
+                          {
+                            text: 'No',
+                            role: 'cancel',
+                            handler: () => {
+                              data.circle[pos].status = 0;
+                            }
+                          },
+                          {
+                            text: 'Yes',
+                            handler: () => {
+                              data.circle[pos].status = objPos;
+                            }
+                          }
+                        ]
+                      });
+                      alert.present();
+                    }
+                  }
+                }); 
+
                 _me_.firestoreDBService.
-                updateDocument("UserCircle", _me_.singletonService.userAuthInfo.phoneNumber, data).then((value) => {
+                updateDocument("UserCircle", 
+                              _me_.singletonService.userAuthInfo.phoneNumber, 
+                              {'circle': data.circle}).
+                then((value) => {
                   // Data updated.
                   _me_.phoneContacts.contactList[idx_c].circleExtra.maxReminders           = data.circle[pos].maxReminders;
                   _me_.singletonService.contactStorageList[idx_s].circleExtra.maxReminders = data.circle[pos].maxReminders;
+
+                  _me_.phoneContacts.contactList[idx_c].circleExtra.status                 = data.circle[pos].status; 
+                  _me_.singletonService.contactStorageList[idx_s].circleExtra.status       = data.circle[pos].status;
 
                   _me_.filterCircle();
 
@@ -172,16 +228,18 @@ export class CircleTabInCirclePage {
         }).catch( (error) => {
           console.log(error);
         });
-      
-      
-    },
-      err => console.log('Error: ', err)
-    );
-
-    
   }
 
   onReminder(forPhoneNumber: string) {
-    alert("On Reminder");
+    this.forPhoneNumber = forPhoneNumber;
+  }
+
+  presentPopover(myEvent) {
+    //alert(this.forPhoneNumber);
+    try {
+      this.app.getRootNav().push(ReminderPopoverPage, {"phoneNumber": this.forPhoneNumber});
+    } catch (e){
+      alert(e);
+    }
   }
 }

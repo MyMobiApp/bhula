@@ -41,11 +41,16 @@
         <button ion-button round color="icon" (click)="onSettings(contact.phoneNumber)">
             <span class="button-text-icon">Settings</span>&nbsp;<ion-icon name="settings" class="button-text-icon"></ion-icon>
         </button>
-        <button ion-button round color="danger" (click)="onReminder(contact.phoneNumber)" item-end>
+        <button ion-button round color="danger" (click)="onReminder(contact.phoneNumber); presentPopover($event);" item-end>
             <span class="button-text-icon">Reminder</span>&nbsp;<ion-icon name="alarm" class="button-text-icon"></ion-icon>
         </button>
       </div>
       
+      <div item-end>
+        <ion-icon *ngIf="contact.circleExtra.status == 0" name="people" class="button-text-icon"></ion-icon>
+        <ion-icon *ngIf="contact.circleExtra.status == 1" name="volume-off" class="button-text-icon"></ion-icon>
+        <ion-icon *ngIf="contact.circleExtra.status == 2" name="remove-circle" class="button-text-icon"></ion-icon>
+      </div>
     </ion-item>
   </ion-list>
 </ion-content>
