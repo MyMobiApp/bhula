@@ -203,6 +203,12 @@ export class MyApp {
           then((value) => {
             // Record added
           });
+        } else {
+          _me_.firebaseDBService.
+          addDocument("UserExtras", _me_.singletonService.userAuthInfo.phoneNumber, {'fcmPushToken' : token}).
+          then((value) => {
+            // Record added
+          });
         }
       } else {
         _me_.firebaseDBService.
