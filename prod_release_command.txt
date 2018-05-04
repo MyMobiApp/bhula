@@ -1,0 +1,7 @@
+Keystore Password: ankur123456
+
+keytool -genkey -v -keystore yaydi-release-key.keystore -alias yaydi -keyalg RSA -keysize 2048 -validity 10000
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore yaydi-release-key.keystore app-release-unsigned.apk yaydi
+
+zipalign -v 4 app-release-unsigned.apk yaydi.apk

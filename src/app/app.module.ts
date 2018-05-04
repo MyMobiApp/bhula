@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { HttpModule } from '@angular/http';
@@ -49,14 +49,14 @@ import { NotificationServiceProvider } from '../providers/notification-service/n
     CirclesPage,
     ReminderListPage,
     TabsPage,
-    LoginPage,
-    SettingsPopoverPage,
-    ReminderContainerPage,
-    ChooseFromCirclesPage,
-    CircleTabInCirclePage,
-    CircleTabInvitationsPage,
-    CircleTabContactsPage,
-    ReminderPopoverPage
+    //LoginPage,
+    //SettingsPopoverPage,
+    //ReminderContainerPage,
+    //ChooseFromCirclesPage,
+    //CircleTabInCirclePage,
+    //CircleTabInvitationsPage,
+    //CircleTabContactsPage,
+    //ReminderPopoverPage
   ],
   imports: [
     BrowserModule,
@@ -104,6 +104,6 @@ import { NotificationServiceProvider } from '../providers/notification-service/n
     ReminderServiceProvider,
     NotificationServiceProvider
   ],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ]
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { IonicModule } from 'ionic-angular';
 import { PhoneLoginComponent } from './phone-login/phone-login';
 import { NavbarStripComponent } from './navbar-strip/navbar-strip';
